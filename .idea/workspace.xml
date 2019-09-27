@@ -4,11 +4,8 @@
     <list default="true" id="62ec16cb-5383-491a-b314-dccb46a17440" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/base/docker-compose-base.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/base/docker-compose-base.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chaincode/src/token/token.go" beforeDir="false" afterPath="$PROJECT_DIR$/chaincode/src/token/token.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base/peer-base.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/base/peer-base.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docker-compose.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/script.sh" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/script.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/transfer.sh" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/transfer.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/utils.sh" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/utils.sh" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -66,7 +63,7 @@
       <workItem from="1568604483458" duration="169000" />
       <workItem from="1568604659255" duration="6799000" />
       <workItem from="1569550493562" duration="1151000" />
-      <workItem from="1569555091387" duration="6197000" />
+      <workItem from="1569555091387" duration="7181000" />
     </task>
     <servers />
   </component>

@@ -28,7 +28,7 @@ services:
     command: peer node start
 
   orderer-base:
-    image: hyperledger/fabric-orderer:$IMAGE_TAG
+    image: harbor.zhigui.com/sbft/fabric-orderer:amd64-latest
     environment:
       - GODEBUG=netdns=go
       - ORDERER_GENERAL_PROFILE_ENABLED=true
