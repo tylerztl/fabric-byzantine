@@ -10,6 +10,13 @@ ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrga
 PEER0_ORG1_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
 PEER0_ORG2_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
 PEER0_ORG3_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org3.example.com/peers/peer0.org3.example.com/tls/ca.crt
+PEER0_ORG4_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org4.example.com/peers/peer0.org4.example.com/tls/ca.crt
+PEER0_ORG5_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org5.example.com/peers/peer0.org5.example.com/tls/ca.crt
+PEER0_ORG6_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org6.example.com/peers/peer0.org6.example.com/tls/ca.crt
+PEER0_ORG7_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org7.example.com/peers/peer0.org7.example.com/tls/ca.crt
+PEER0_ORG8_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org8.example.com/peers/peer0.org8.example.com/tls/ca.crt
+PEER0_ORG9_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org9.example.com/peers/peer0.org9.example.com/tls/ca.crt
+PEER0_ORG10_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org10.example.com/peers/peer0.org10.example.com/tls/ca.crt
 
 # verify the result of the end-to-end test
 verifyResult() {
@@ -49,7 +56,6 @@ setGlobals() {
     else
       CORE_PEER_ADDRESS=peer1.org2.example.com:10051
     fi
-
   elif [ $ORG -eq 3 ]; then
     CORE_PEER_LOCALMSPID="Org3MSP"
     CORE_PEER_TLS_ROOTCERT_FILE=$PEER0_ORG3_CA
@@ -59,6 +65,70 @@ setGlobals() {
     else
       CORE_PEER_ADDRESS=peer1.org3.example.com:12051
     fi
+   elif [ $ORG -eq 4 ]; then
+    CORE_PEER_LOCALMSPID="Org4MSP"
+    CORE_PEER_TLS_ROOTCERT_FILE=$PEER0_ORG4_CA
+    CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org4.example.com/users/Admin@org4.example.com/msp
+    if [ $PEER -eq 0 ]; then
+      CORE_PEER_ADDRESS=peer0.org4.example.com:13051
+    else
+      CORE_PEER_ADDRESS=peer1.org4.example.com:14051
+    fi
+  elif [ $ORG -eq 5 ]; then
+    CORE_PEER_LOCALMSPID="Org5MSP"
+    CORE_PEER_TLS_ROOTCERT_FILE=$PEER0_ORG5_CA
+    CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org5.example.com/users/Admin@org5.example.com/msp
+    if [ $PEER -eq 0 ]; then
+      CORE_PEER_ADDRESS=peer0.org5.example.com:15051
+    else
+      CORE_PEER_ADDRESS=peer1.org5.example.com:16051
+    fi
+   elif [ $ORG -eq 6 ]; then
+    CORE_PEER_LOCALMSPID="Org6MSP"
+    CORE_PEER_TLS_ROOTCERT_FILE=$PEER0_ORG6_CA
+    CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org6.example.com/users/Admin@org6.example.com/msp
+    if [ $PEER -eq 0 ]; then
+      CORE_PEER_ADDRESS=peer0.org6.example.com:17051
+    else
+      CORE_PEER_ADDRESS=peer1.org6.example.com:18051
+    fi
+  elif [ $ORG -eq 7 ]; then
+    CORE_PEER_LOCALMSPID="Org7MSP"
+    CORE_PEER_TLS_ROOTCERT_FILE=$PEER0_ORG7_CA
+    CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org7.example.com/users/Admin@org7.example.com/msp
+    if [ $PEER -eq 0 ]; then
+      CORE_PEER_ADDRESS=peer0.org7.example.com:19051
+    else
+      CORE_PEER_ADDRESS=peer1.org7.example.com:20051
+    fi
+   elif [ $ORG -eq 8 ]; then
+    CORE_PEER_LOCALMSPID="Org8MSP"
+    CORE_PEER_TLS_ROOTCERT_FILE=$PEER0_ORG8_CA
+    CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org8.example.com/users/Admin@org8.example.com/msp
+    if [ $PEER -eq 0 ]; then
+      CORE_PEER_ADDRESS=peer0.org8.example.com:21051
+    else
+      CORE_PEER_ADDRESS=peer1.org8.example.com:22051
+    fi
+  elif [ $ORG -eq 9 ]; then
+    CORE_PEER_LOCALMSPID="Org9MSP"
+    CORE_PEER_TLS_ROOTCERT_FILE=$PEER0_ORG9_CA
+    CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org9.example.com/users/Admin@org9.example.com/msp
+    if [ $PEER -eq 0 ]; then
+      CORE_PEER_ADDRESS=peer0.org9.example.com:23051
+    else
+      CORE_PEER_ADDRESS=peer1.org9.example.com:24051
+    fi
+   elif [ $ORG -eq 10 ]; then
+    CORE_PEER_LOCALMSPID="Org10MSP"
+    CORE_PEER_TLS_ROOTCERT_FILE=$PEER0_ORG10_CA
+    CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org10.example.com/users/Admin@org10.example.com/msp
+    if [ $PEER -eq 0 ]; then
+      CORE_PEER_ADDRESS=peer0.org10.example.com:25051
+    else
+      CORE_PEER_ADDRESS=peer1.org10.example.com:26051
+    fi
+
   else
     echo "================== ERROR !!! ORG Unknown =================="
   fi
@@ -139,12 +209,12 @@ instantiateChaincode() {
   # the "-o" option
   if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
     set -x
-    peer chaincode instantiate -o orderer.example.com:7050 -C $CHANNEL_NAME -n token -l ${LANGUAGE} -v ${VERSION} -c '{"Args":["init","a","100","b","200"]}' -P "AND ('Org1MSP.peer','Org2MSP.peer')" >&log.txt
+    peer chaincode instantiate -o orderer.example.com:7050 -C $CHANNEL_NAME -n token -l ${LANGUAGE} -v ${VERSION} -c '{"Args":["init","a","100","b","200"]}' -P "OutOf(6,'Org1MSP.peer','Org2MSP.peer','Org3MSP.peer','Org4MSP.peer','Org5MSP.peer','Org6MSP.peer','Org7MSP.peer','Org8MSP.peer','Org9MSP.peer','Org10MSP.peer')" >&log.txt
     res=$?
     set +x
   else
     set -x
-    peer chaincode instantiate -o orderer.example.com:7050 --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n token -l ${LANGUAGE} -v 1.0 -c '{"Args":["init","a","100","b","200"]}' -P "AND ('Org1MSP.member','Org2MSP.member')" >&log.txt
+    peer chaincode instantiate -o orderer.example.com:7050 --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n token -l ${LANGUAGE} -v 1.0 -c '{"Args":["init","a","100","b","200"]}' -P "OutOf(6,'Org1MSP.peer','Org2MSP.peer','Org3MSP.peer','Org4MSP.peer','Org5MSP.peer','Org6MSP.peer','Org7MSP.peer','Org8MSP.peer','Org9MSP.peer','Org10MSP.peer')" >&log.txt
     res=$?
     set +x
   fi
@@ -174,38 +244,23 @@ chaincodeQuery() {
   ORG=$2
   setGlobals $PEER $ORG
   echo "===================== Querying on peer${PEER}.org${ORG} on channel '$CHANNEL_NAME'... ===================== "
-#  local rc=1
-#  local starttime=$(date +%s)
-#
-#  # continue to poll
-#  # we either get a successful response, or reach TIMEOUT
-#  while
-#    test "$(($(date +%s) - starttime))" -lt "$TIMEOUT" -a $rc -ne 0
-#  do
-#    sleep $DELAY
-#    echo "Attempting to Query peer${PEER}.org${ORG} ...$(($(date +%s) - starttime)) secs"
-#    set -x
-    peer chaincode query -C $CHANNEL_NAME -n token -c '{"Args":["balance","fab","'$3'"]}'
-#    res=$?
-#    set +x
-#    test $res -eq 0 && VALUE=$(cat log.txt | awk '/Query Result/ {print $NF}')
-#    test "$VALUE" = "$EXPECTED_RESULT" && let rc=0
-#    # removed the string "Query Result" from peer chaincode query command
-#    # result. as a result, have to support both options until the change
-#    # is merged.
-#    test $rc -ne 0 && VALUE=$(cat log.txt | egrep '^[0-9]+$')
-#    test "$VALUE" = "$EXPECTED_RESULT" && let rc=0
-#  done
-#  echo
-#  cat log.txt
-#  if test $rc -eq 0; then
-#    echo "===================== Query successful on peer${PEER}.org${ORG} on channel '$CHANNEL_NAME' ===================== "
-#  else
-#    echo "!!!!!!!!!!!!!!! Query result on peer${PEER}.org${ORG} is INVALID !!!!!!!!!!!!!!!!"
-#    echo "================== ERROR !!! FAILED to execute End-2-End Scenario =================="
-#    echo
-#    exit 1
-#  fi
+  local rc=0
+  local starttime=$(date +%s)
+
+  # continue to poll
+  # we either get a successful response, or reach TIMEOUT
+  while
+    test "$(($(date +%s) - starttime))" -lt "$TIMEOUT" -a $rc -ne 0
+  do
+    sleep $DELAY
+    echo "Attempting to Query peer${PEER}.org${ORG} ...$(($(date +%s) - starttime)) secs"
+    set -x
+    peer chaincode query -C $CHANNEL_NAME -n token -c '{"Args":["balance","fab","'$3'"]}' >&log.txt
+    res=$?
+    set +x
+  done
+  echo
+  cat log.txt
 }
 
 # fetchChannelConfig <channel_id> <output_json>
@@ -329,12 +384,12 @@ issueToken() {
   # it using the "-o" option
   if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
     set -x
-    peer chaincode invoke -o orderer.example.com:7050 -C $CHANNEL_NAME -n token $PEER_CONN_PARMS -c '{"Args":["issue","bob","18","fab","10000000000"]}' >&log.txt
+    peer chaincode invoke -o orderer.example.com:7050 -C $CHANNEL_NAME -n token $PEER_CONN_PARMS -c '{"Args":["issue","alice","fab","100000000000000"]}' >&log.txt
     res=$?
     set +x
   else
     set -x
-    peer chaincode invoke -o orderer.example.com:7050 --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n token $PEER_CONN_PARMS -c '{"Args":["issue","bob","18","fab","10000000000"]}' >&log.txt
+    peer chaincode invoke -o orderer.example.com:7050 --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n token $PEER_CONN_PARMS -c '{"Args":["issue","alice","fab","100000000000000"]}' >&log.txt
     res=$?
     set +x
   fi

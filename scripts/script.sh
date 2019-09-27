@@ -58,7 +58,7 @@ createChannel() {
 }
 
 joinChannel () {
-	for org in 1 2; do
+	for org in 1 2 3 4 5 6 7 8 9 10; do
 	    for peer in 0 1; do
 		joinChannelWithRetry $peer $org
 		echo "===================== peer${peer}.org${org} joined channel '$CHANNEL_NAME' ===================== "
@@ -87,24 +87,32 @@ echo "Installing chaincode on peer0.org1..."
 installChaincode 0 1
 echo "Install chaincode on peer0.org2..."
 installChaincode 0 2
+echo "Installing chaincode on peer0.org3..."
+installChaincode 0 3
+echo "Installing chaincode on peer0.org4..."
+installChaincode 0 4
+echo "Instantiating chaincode on peer0.org5..."
+installChaincode 0 5
+echo "Installing chaincode on peer0.org6..."
+installChaincode 0 6
+echo "Install chaincode on peer0.org7..."
+installChaincode 0 7
+echo "Installing chaincode on peer0.org8..."
+installChaincode 0 8
+echo "Installing chaincode on peer0.org9..."
+installChaincode 0 9
+echo "Installing chaincode on peer0.org10..."
+installChaincode 0 10
 
-## Install chaincode on peer1.org1
-echo "Installing chaincode on peer1.org1..."
-installChaincode 1 1
-
-## Install chaincode on peer1.org2
-echo "Installing chaincode on peer1.org2..."
-installChaincode 1 2
-
-# Instantiate chaincode on peer0.org2
-echo "Instantiating chaincode on peer0.org2..."
-instantiateChaincode 0 2
+# Instantiate chaincode
+echo "Instantiating chaincode on peer0.org1..."
+instantiateChaincode 0 1
 
 sleep 3
 
 # Invoke chaincode on peer0.org1 and peer0.org2
 echo "Sending invoke transaction on peer0.org1 peer0.org2..."
-issueToken 0 1 0 2
+issueToken 0 1 0 2 0 3 0 4 0 5 0 6
 
 echo
 echo "========= All GOOD, BYFN execution completed =========== "

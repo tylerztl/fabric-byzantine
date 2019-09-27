@@ -13,7 +13,6 @@ type Token struct {
 	Owner       string         `json:"Owner"`
 	TotalSupply int            `json:"TotalSupply"`
 	TokenName   string         `json:"TokenName"`
-	TokenSymbol string         `json:"TokenSymbol"`
 	BalanceOf   map[string]int `json:"BalanceOf"`
 }
 
@@ -26,11 +25,6 @@ func (token *Token) transfer(_from string, _to string, _value int) {
 
 func (token *Token) balance(_from string) int {
 	return token.BalanceOf[_from]
-}
-
-func (token *Token) mint(_value int) {
-	token.BalanceOf[token.Owner] += _value
-	token.TotalSupply += _value
 }
 
 type Account struct {
@@ -49,20 +43,18 @@ func (s *TokenContract) Init(stub shim.ChaincodeStubInterface) pb.Response {
 }
 
 func (s *TokenContract) issue(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	if len(args) != 4 {
+	if len(args) != 3 {
 		return shim.Error("Incorrect number of arguments. Expecting 2")
 	}
 
 	owner := args[0]
-	symbol := args[1]
-	name := args[2]
-	supply, _ := strconv.Atoi(args[3])
+	name := args[1]
+	supply, _ := strconv.Atoi(args[2])
 
 	token := &Token{
 		Owner:       owner,
 		TotalSupply: supply,
 		TokenName:   name,
-		TokenSymbol: symbol,
 		BalanceOf:   map[string]int{},
 	}
 
@@ -99,7 +91,6 @@ func (s *TokenContract) transfer(stub shim.ChaincodeStubInterface, args []string
 		Owner:       "",
 		TotalSupply: 0,
 		TokenName:   "",
-		TokenSymbol: "",
 		BalanceOf:   make(map[string]int),
 	}
 
@@ -145,7 +136,6 @@ func (s *TokenContract) balance(stub shim.ChaincodeStubInterface, args []string)
 	account := Account{
 		Owner:       token.Owner,
 		TokenName:   token.TokenName,
-		TokenSymbol: token.TokenSymbol,
 		Balance:     amount,
 	}
 	value := strconv.Itoa(amount)

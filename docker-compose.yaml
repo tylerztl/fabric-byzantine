@@ -8,9 +8,15 @@ version: '2'
 volumes:
   orderer.example.com:
   peer0.org1.example.com:
-  peer1.org1.example.com:
   peer0.org2.example.com:
-  peer1.org2.example.com:
+  peer0.org3.example.com:
+  peer0.org4.example.com:
+  peer0.org5.example.com:
+  peer0.org6.example.com:
+  peer0.org7.example.com:
+  peer0.org8.example.com:
+  peer0.org9.example.com:
+  peer0.org10.example.com:
 
 networks:
   byfn:
@@ -65,14 +71,6 @@ services:
     networks:
       - byfn
 
-  peer1.org1.example.com:
-    container_name: peer1.org1.example.com
-    extends:
-      file:  base/docker-compose-base.yaml
-      service: peer1.org1.example.com
-    networks:
-      - byfn
-
   peer0.org2.example.com:
     container_name: peer0.org2.example.com
     extends:
@@ -81,46 +79,69 @@ services:
     networks:
       - byfn
 
-  peer1.org2.example.com:
-    container_name: peer1.org2.example.com
-#    image: hyperledger/fabric-peer:$IMAGE_TAG
-    image: harbor.zhigui.com/sbft/fabric-peer:evil
-    environment:
-      - GODEBUG=netdns=go
-      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
-      # the following setting starts chaincode containers on the same
-      # bridge network as the peers
-      # https://docs.docker.com/compose/networking/
-      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=${COMPOSE_PROJECT_NAME}_byfn
-      - FABRIC_LOGGING_SPEC=INFO
-      #- FABRIC_LOGGING_SPEC=DEBUG
-      - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_GOSSIP_USELEADERELECTION=true
-      - CORE_PEER_GOSSIP_ORGLEADER=false
-      - CORE_PEER_PROFILE_ENABLED=true
-      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
-      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
-      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
-      - CORE_PEER_ID=peer1.org2.example.com
-      - CORE_PEER_ADDRESS=peer1.org2.example.com:10051
-      - CORE_PEER_LISTENADDRESS=0.0.0.0:10051
-      - CORE_PEER_CHAINCODEADDRESS=peer1.org2.example.com:10052
-      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:10052
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org2.example.com:10051
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.org2.example.com:9051
-      - CORE_PEER_LOCALMSPID=Org2MSP
-    volumes:
-      - /var/run/:/host/var/run/
-      - ./crypto-config/peerOrganizations/org2.example.com/peers/peer1.org2.example.com/msp:/etc/hyperledger/fabric/msp
-      - ./crypto-config/peerOrganizations/org2.example.com/peers/peer1.org2.example.com/tls:/etc/hyperledger/fabric/tls
-      - peer1.org2.example.com:/var/hyperledger/production
-    ports:
-      - 10051:10051
-    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
-    command: peer node start
+  peer0.org3.example.com:
+    container_name: peer0.org3.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.org3.example.com
     networks:
       - byfn
 
+  peer0.org4.example.com:
+    container_name: peer0.org4.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.org4.example.com
+    networks:
+      - byfn
+
+  peer0.org5.example.com:
+    container_name: peer0.org5.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.org5.example.com
+    networks:
+      - byfn
+
+  peer0.org6.example.com:
+    container_name: peer0.org6.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.org6.example.com
+    networks:
+      - byfn
+
+  peer0.org7.example.com:
+    container_name: peer0.org7.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.org7.example.com
+    networks:
+      - byfn
+
+  peer0.org8.example.com:
+    container_name: peer0.org8.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.org8.example.com
+    networks:
+      - byfn
+
+  peer0.org9.example.com:
+    container_name: peer0.org9.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.org9.example.com
+    networks:
+      - byfn
+
+  peer0.org10.example.com:
+    container_name: peer0.org10.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.org10.example.com
+    networks:
+      - byfn
 
   cli:
     container_name: cli
@@ -151,8 +172,14 @@ services:
     depends_on:
       - orderer.example.com
       - peer0.org1.example.com
-      - peer1.org1.example.com
       - peer0.org2.example.com
-      - peer1.org2.example.com
+      - peer0.org3.example.com
+      - peer0.org4.example.com
+      - peer0.org5.example.com
+      - peer0.org6.example.com
+      - peer0.org7.example.com
+      - peer0.org8.example.com
+      - peer0.org9.example.com
+      - peer0.org10.example.com
     networks:
       - byfn
