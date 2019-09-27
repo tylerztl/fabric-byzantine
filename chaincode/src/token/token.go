@@ -110,7 +110,7 @@ func (s *TokenContract) transfer(stub shim.ChaincodeStubInterface, args []string
 	}
 	fmt.Printf("transferToken - end %s \n", string(tokenAsBytes))
 
-	return shim.Success(nil)
+	return shim.Success(tokenAsBytes)
 }
 
 func (s *TokenContract) balance(stub shim.ChaincodeStubInterface, args []string) pb.Response {

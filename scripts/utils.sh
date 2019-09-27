@@ -364,7 +364,7 @@ chaincodeInvoke() {
     set +x
   else
     set -x
-    peer chaincode invoke -o orderer.example.com:7050 --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n token $PEER_CONN_PARMS -c '{"Args":["transfer","fab","bob","alice","10"]}' >&log.txt
+    peer chaincode invoke -o orderer.example.com:7050 --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n token $PEER_CONN_PARMS -c '{"Args":["transfer","fab","alice","bob","1000000000"]}' >&log.txt
     res=$?
     set +x
   fi
