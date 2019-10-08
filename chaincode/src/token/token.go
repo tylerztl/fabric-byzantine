@@ -44,25 +44,26 @@ func (s *TokenContract) Init(stub shim.ChaincodeStubInterface) pb.Response {
 }
 
 func (s *TokenContract) issue(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	if len(args) != 3 {
-		return shim.Error("Incorrect number of arguments. Expecting 2")
+	if len(args) != 4 {
+		return shim.Error("Incorrect number of arguments. Expecting 4")
 	}
 
 	owner := args[0]
 	name := args[1]
 	supply, _ := strconv.Atoi(args[2])
+	byzantineNum, _ := strconv.Atoi(args[3])
 
 	peers := make(map[string]bool)
-	peers["peer0.org1.example.com"] = true
-	peers["peer0.org2.example.com"] = true
-	peers["peer0.org3.example.com"] = true
-	peers["peer0.org4.example.com"] = true
-	peers["peer0.org5.example.com"] = true
-	peers["peer0.org6.example.com"] = true
-	peers["peer0.org7.example.com"] = true
-	peers["peer0.org8.example.com"] = true
-	peers["peer0.org9.example.com"] = true
-	peers["peer0.org10.example.com"] = false
+	peers["peer0.org1.example.com"] = !(byzantineNum > 9)
+	peers["peer0.org2.example.com"] = !(byzantineNum > 8)
+	peers["peer0.org3.example.com"] = !(byzantineNum > 7)
+	peers["peer0.org4.example.com"] = !(byzantineNum > 6)
+	peers["peer0.org5.example.com"] = !(byzantineNum > 5)
+	peers["peer0.org6.example.com"] = !(byzantineNum > 4)
+	peers["peer0.org7.example.com"] = !(byzantineNum > 3)
+	peers["peer0.org8.example.com"] = !(byzantineNum > 2)
+	peers["peer0.org9.example.com"] = !(byzantineNum > 1)
+	peers["peer0.org10.example.com"] = !(byzantineNum > 0)
 
 	token := &Token{
 		Owner:       owner,
@@ -70,7 +71,7 @@ func (s *TokenContract) issue(stub shim.ChaincodeStubInterface, args []string) p
 		TokenName:   name,
 		BalanceOf:   map[string]int{},
 		Peers:       peers,
-		Flag:        false, // true: byzantine peer attack
+		Flag:        true, // true: byzantine peer attack
 	}
 
 	token.BalanceOf[token.Owner] = token.TotalSupply
