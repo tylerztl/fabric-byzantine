@@ -3,8 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="62ec16cb-5383-491a-b314-dccb46a17440" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/script.sh" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/script.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/transfer.sh" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/transfer.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chaincode/src/token/token.go" beforeDir="false" afterPath="$PROJECT_DIR$/chaincode/src/token/token.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/utils.sh" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/utils.sh" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -75,7 +74,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>

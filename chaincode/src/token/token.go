@@ -134,7 +134,7 @@ func (s *TokenContract) balance(stub shim.ChaincodeStubInterface, args []string)
 	amount := token.balance(args[1])
 
 	account := Account{
-		Owner:       token.Owner,
+		Owner:       args[1],
 		TokenName:   token.TokenName,
 		Balance:     amount,
 	}
