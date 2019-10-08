@@ -37,21 +37,9 @@ type Account struct {
 
 // Define the Smart Contract structure
 type TokenContract struct {
-	Peers map[string]bool
 }
 
 func (s *TokenContract) Init(stub shim.ChaincodeStubInterface) pb.Response {
-	s.Peers = make(map[string]bool)
-	s.Peers["peer0.org1.example.com"] = true
-	s.Peers["peer0.org2.example.com"] = true
-	s.Peers["peer0.org3.example.com"] = true
-	s.Peers["peer0.org4.example.com"] = true
-	s.Peers["peer0.org5.example.com"] = true
-	s.Peers["peer0.org6.example.com"] = true
-	s.Peers["peer0.org7.example.com"] = true
-	s.Peers["peer0.org8.example.com"] = true
-	s.Peers["peer0.org9.example.com"] = true
-	s.Peers["peer0.org10.example.com"] = true
 	return shim.Success(nil)
 }
 
@@ -64,12 +52,24 @@ func (s *TokenContract) issue(stub shim.ChaincodeStubInterface, args []string) p
 	name := args[1]
 	supply, _ := strconv.Atoi(args[2])
 
+	peers := make(map[string]bool)
+	peers["peer0.org1.example.com"] = true
+	peers["peer0.org2.example.com"] = true
+	peers["peer0.org3.example.com"] = true
+	peers["peer0.org4.example.com"] = true
+	peers["peer0.org5.example.com"] = true
+	peers["peer0.org6.example.com"] = true
+	peers["peer0.org7.example.com"] = true
+	peers["peer0.org8.example.com"] = true
+	peers["peer0.org9.example.com"] = true
+	peers["peer0.org10.example.com"] = false
+
 	token := &Token{
 		Owner:       owner,
 		TotalSupply: supply,
 		TokenName:   name,
 		BalanceOf:   map[string]int{},
-		Peers:       s.Peers,
+		Peers:       peers,
 		Flag:        false, // true: byzantine peer attack
 	}
 
@@ -88,7 +88,7 @@ func (s *TokenContract) issue(stub shim.ChaincodeStubInterface, args []string) p
 func (s *TokenContract) transfer(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	if len(args) != 5 {
-		return shim.Error("Incorrect number of arguments. Expecting 4")
+		return shim.Error("Incorrect number of arguments. Expecting 5")
 	}
 	_from := args[1]
 	_to := args[2]
@@ -142,7 +142,7 @@ func (s *TokenContract) setPeer(stub shim.ChaincodeStubInterface, args []string)
 	if err != nil {
 		return shim.Error(err.Error())
 	}
-	fmt.Printf("canch - begin %s \n", string(tokenAsBytes))
+	fmt.Printf("setPeer - begin %s \n", string(tokenAsBytes))
 
 	token := Token{
 		Owner:       "",
@@ -168,7 +168,7 @@ func (s *TokenContract) setPeer(stub shim.ChaincodeStubInterface, args []string)
 	if err != nil {
 		return shim.Error(err.Error())
 	}
-	fmt.Printf("canch - end %s \n", string(tokenAsBytes))
+	fmt.Printf("setPeer - end %s \n", string(tokenAsBytes))
 
 	return shim.Success(tokenAsBytes)
 }

@@ -14,7 +14,7 @@ DELAY="$2"
 LANGUAGE="$3"
 TIMEOUT="$4"
 VERBOSE="$5"
-: ${CHANNEL_NAME:="mychannel"}
+: ${CHANNEL_NAME:="mychannel1"}
 : ${DELAY:="3"}
 : ${LANGUAGE:="golang"}
 : ${TIMEOUT:="10"}
@@ -37,6 +37,11 @@ echo "Channel name : "$CHANNEL_NAME
 # import utils
 . scripts/utils.sh
 
+# Set peer type
+#echo "Set peer type on peer0.org1 peer0.org2..."
+#setPeer 0 1 0 2 0 3 0 4 0 5 0 6
+#sleep 3
+
 # Invoke chaincode
 echo "Sending invoke transaction on peer0.org1 peer0.org2..."
 chaincodeInvoke 0 1 0 2 0 3 0 4 0 5 0 6
@@ -44,7 +49,7 @@ sleep 3
 
 # Query on chaincode on peer1.org2, check if the result is 90
 echo "Querying chaincode on peer1.org1..."
-chaincodeQuery 0 1 bob
+chaincodeQuery 0 1 alice
 
 echo
 echo "========= All GOOD, BYFN execution completed =========== "

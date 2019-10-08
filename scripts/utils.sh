@@ -244,21 +244,7 @@ chaincodeQuery() {
   ORG=$2
   setGlobals $PEER $ORG
   echo "===================== Querying on peer${PEER}.org${ORG} on channel '$CHANNEL_NAME'... ===================== "
-  local rc=0
-  local starttime=$(date +%s)
-
-  # continue to poll
-  # we either get a successful response, or reach TIMEOUT
-  while
-    test "$(($(date +%s) - starttime))" -lt "$TIMEOUT" -a $rc -ne 0
-  do
-    sleep $DELAY
-    echo "Attempting to Query peer${PEER}.org${ORG} ...$(($(date +%s) - starttime)) secs"
-    set -x
-    peer chaincode query -C $CHANNEL_NAME -n token -c '{"Args":["balance","fab","'$3'"]}' >&log.txt
-    res=$?
-    set +x
-  done
+  peer chaincode query -C $CHANNEL_NAME -n token -c '{"Args":["balance","fab","'$3'"]}' >&log.txt
   echo
   cat log.txt
 }
@@ -359,12 +345,12 @@ chaincodeInvoke() {
   # it using the "-o" option
   if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
     set -x
-    peer chaincode invoke -o orderer.example.com:7050 -C $CHANNEL_NAME -n token $PEER_CONN_PARMS -c '{"Args":["transfer","fab","bob","alice","10"]}' >&log.txt
+    peer chaincode invoke -o orderer.example.com:7050 -C $CHANNEL_NAME -n token $PEER_CONN_PARMS -c '{"Args":["transfer","fab","alice","bob","10","false"]}' >&log.txt
     res=$?
     set +x
   else
     set -x
-    peer chaincode invoke -o orderer.example.com:7050 --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n token $PEER_CONN_PARMS -c '{"Args":["transfer","fab","alice","bob","1000000000"]}' >&log.txt
+    peer chaincode invoke -o orderer.example.com:7050 --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n token $PEER_CONN_PARMS -c '{"Args":["transfer","fab","alice","bob","10","false"]}' >&log.txt
     res=$?
     set +x
   fi
@@ -390,6 +376,31 @@ issueToken() {
   else
     set -x
     peer chaincode invoke -o orderer.example.com:7050 --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n token $PEER_CONN_PARMS -c '{"Args":["issue","alice","fab","100000"]}' >&log.txt
+    res=$?
+    set +x
+  fi
+  cat log.txt
+  verifyResult $res "Invoke execution on $PEERS failed "
+  echo "===================== Invoke transaction successful on $PEERS on channel '$CHANNEL_NAME' ===================== "
+  echo
+}
+
+setPeer() {
+  parsePeerConnectionParameters $@
+  res=$?
+  verifyResult $res "Invoke transaction failed on channel '$CHANNEL_NAME' due to uneven number of peer and org parameters "
+
+  # while 'peer chaincode' command can get the orderer endpoint from the
+  # peer (if join was successful), let's supply it directly as we know
+  # it using the "-o" option
+  if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
+    set -x
+    peer chaincode invoke -o orderer.example.com:7050 -C $CHANNEL_NAME -n token $PEER_CONN_PARMS -c '{"Args":["setPeer","fab","peer0.org1.example.com","false"]}' >&log.txt
+    res=$?
+    set +x
+  else
+    set -x
+    peer chaincode invoke -o orderer.example.com:7050 --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n token $PEER_CONN_PARMS -c '{"Args":["setPeer","fab","peer0.org1.example.com","false"]}' >&log.txt
     res=$?
     set +x
   fi

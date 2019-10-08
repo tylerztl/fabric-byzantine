@@ -2,18 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="62ec16cb-5383-491a-b314-dccb46a17440" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/channel-artifacts/mychannel1.tx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/channel-artifacts/mychannel10.tx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/channel-artifacts/mychannel2.tx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/channel-artifacts/mychannel3.tx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/channel-artifacts/mychannel4.tx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/channel-artifacts/mychannel5.tx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/channel-artifacts/mychannel6.tx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/channel-artifacts/mychannel7.tx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/channel-artifacts/mychannel8.tx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/channel-artifacts/mychannel9.tx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/chaincode/src/token/token.go" beforeDir="false" afterPath="$PROJECT_DIR$/chaincode/src/token/token.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/script.sh" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/script.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/transfer.sh" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/transfer.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/utils.sh" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/utils.sh" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -35,13 +28,13 @@
     <property name="settings.editor.selected.configurable" value="preferences.updates" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/channel-artifacts" />
-      <recent name="$PROJECT_DIR$" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/channel-artifacts" />
       <recent name="$PROJECT_DIR$/scripts" />
+      <recent name="$PROJECT_DIR$" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/channel-artifacts" />
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
