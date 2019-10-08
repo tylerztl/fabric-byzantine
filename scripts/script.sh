@@ -112,7 +112,7 @@ sleep 3
 
 # Invoke chaincode on peer0.org1 and peer0.org2
 echo "Sending invoke transaction on peer0.org1 peer0.org2..."
-issueToken 0 1 0 2 0 3 0 4 0 5 0 6
+issueToken 0 1 0 2 0 3 0 4 0 5 0 6 0 7 0 8 0 9 0 10
 
 echo
 echo "========= All GOOD, BYFN execution completed =========== "
