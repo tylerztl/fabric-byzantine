@@ -373,6 +373,36 @@
 			"revisionTime": "2019-03-05T20:19:16Z"
 		},
 		{
+			"checksumSHA1": "qlEzrgKgIkh7y0ePm9BNo1cNdXo=",
+			"path": "github.com/gin-contrib/sse",
+			"revision": "43f0f29dbd2b3f0feeebff91fd9cda22db296938",
+			"revisionTime": "2019-09-05T05:13:34Z"
+		},
+		{
+			"checksumSHA1": "gjpGp/nldL8OAvK8Jmx454MNQvA=",
+			"path": "github.com/gin-gonic/gin",
+			"revision": "4fd3234840dbfec7b619f70f341e339f66604cfd",
+			"revisionTime": "2019-10-02T23:46:41Z"
+		},
+		{
+			"checksumSHA1": "YVmkm8rchyirBqjRyN/G+ULrpDo=",
+			"path": "github.com/gin-gonic/gin/binding",
+			"revision": "4fd3234840dbfec7b619f70f341e339f66604cfd",
+			"revisionTime": "2019-10-02T23:46:41Z"
+		},
+		{
+			"checksumSHA1": "rST0S8cuVbM57VmJhWXhKNUkKTc=",
+			"path": "github.com/gin-gonic/gin/internal/json",
+			"revision": "4fd3234840dbfec7b619f70f341e339f66604cfd",
+			"revisionTime": "2019-10-02T23:46:41Z"
+		},
+		{
+			"checksumSHA1": "lbL3cOGzkGouMKZ+lAYnXgOa/DE=",
+			"path": "github.com/gin-gonic/gin/render",
+			"revision": "4fd3234840dbfec7b619f70f341e339f66604cfd",
+			"revisionTime": "2019-10-02T23:46:41Z"
+		},
+		{
 			"checksumSHA1": "bp1ClkjUs5pY6vpPF3ktUEFvII0=",
 			"origin": "github.com/hyperledger/fabric-sdk-go/vendor/github.com/go-kit/kit/log",
 			"path": "github.com/go-kit/kit/log",
@@ -427,6 +457,24 @@
 			"path": "github.com/go-logfmt/logfmt",
 			"revision": "bda01c9488d7b007adf7b6624c0b21ae99343d12",
 			"revisionTime": "2019-02-13T19:54:35Z"
+		},
+		{
+			"checksumSHA1": "b4DmyMT9bicTRVJw1hJXHLhIH+0=",
+			"path": "github.com/go-playground/locales",
+			"revision": "630ebbb602847eba93e75ae38bbc7bb7abcf1ff3",
+			"revisionTime": "2019-04-30T15:33:29Z"
+		},
+		{
+			"checksumSHA1": "JgF260rC9YpWyY5WEljjimWLUXs=",
+			"path": "github.com/go-playground/locales/currency",
+			"revision": "630ebbb602847eba93e75ae38bbc7bb7abcf1ff3",
+			"revisionTime": "2019-04-30T15:33:29Z"
+		},
+		{
+			"checksumSHA1": "7QcjNTtW0Rc/5BPw1MPaQ6YNjso=",
+			"path": "github.com/go-playground/universal-translator",
+			"revision": "71201497bace774495daed26a3874fd339e0b538",
+			"revisionTime": "2017-03-27T19:17:03Z"
 		},
 		{
 			"checksumSHA1": "zwcsZ0hRuISSXkuJBeaO4grlZ18=",
@@ -1687,6 +1735,12 @@
 			"revisionTime": "2014-10-17T20:07:13Z"
 		},
 		{
+			"checksumSHA1": "hNqq14LFOpVJ6hCs+OTAEKrWUkk=",
+			"path": "github.com/json-iterator/go",
+			"revision": "819acad769e54806c920726ac93537ba4e2c22ad",
+			"revisionTime": "2019-09-23T06:02:24Z"
+		},
+		{
 			"checksumSHA1": "uwKH/2+mvXs8NRR/jwz8n+ivedY=",
 			"origin": "github.com/hyperledger/fabric/vendor/github.com/konsorten/go-windows-terminal-sequences",
 			"path": "github.com/konsorten/go-windows-terminal-sequences",
@@ -1715,11 +1769,23 @@
 			"revisionTime": "2019-03-05T20:19:16Z"
 		},
 		{
+			"checksumSHA1": "O5KNHAjNKSO1Wh5/4JSnp/KXu9U=",
+			"path": "github.com/leodido/go-urn",
+			"revision": "a67a23e1c1af3c66528573bb86a87246477277c1",
+			"revisionTime": "2018-12-04T09:21:09Z"
+		},
+		{
 			"checksumSHA1": "Miru3KXpJ+bMOmT7Q3auY7ODZE0=",
 			"origin": "github.com/hyperledger/fabric-sdk-go/vendor/github.com/magiconair/properties",
 			"path": "github.com/magiconair/properties",
 			"revision": "bda01c9488d7b007adf7b6624c0b21ae99343d12",
 			"revisionTime": "2019-02-13T19:54:35Z"
+		},
+		{
+			"checksumSHA1": "nj9rbH76zpC2GJcnxb6cdSRYNRQ=",
+			"path": "github.com/mattn/go-isatty",
+			"revision": "62f712808a2a54a0f220e557074b33f99af9440b",
+			"revisionTime": "2019-10-03T00:19:46Z"
 		},
 		{
 			"checksumSHA1": "bKMZjd2wPw13VwoE7mBeSv5djFA=",
@@ -1741,6 +1807,18 @@
 			"path": "github.com/mitchellh/mapstructure",
 			"revision": "bda01c9488d7b007adf7b6624c0b21ae99343d12",
 			"revisionTime": "2019-02-13T19:54:35Z"
+		},
+		{
+			"checksumSHA1": "ZTcgWKWHsrX0RXYVXn5Xeb8Q0go=",
+			"path": "github.com/modern-go/concurrent",
+			"revision": "bacd9c7ef1dd9b15be4a9909b8ac7a4e313eec94",
+			"revisionTime": "2018-03-06T01:26:44Z"
+		},
+		{
+			"checksumSHA1": "qvH48wzTIV3QKSDqI0dLFtVjaDI=",
+			"path": "github.com/modern-go/reflect2",
+			"revision": "94122c33edd36123c84d5368cfb2b69df93a0ec8",
+			"revisionTime": "2018-07-18T01:23:57Z"
 		},
 		{
 			"checksumSHA1": "AuSbnsHCeoprvNSurGPgVqvg/eE=",
@@ -1928,6 +2006,12 @@
 			"path": "github.com/sykesm/zap-logfmt",
 			"revision": "325999f0afddb284a85059d2b4a40b836d7225b2",
 			"revisionTime": "2019-03-05T20:19:16Z"
+		},
+		{
+			"checksumSHA1": "8mJ7vjP4pj4Y8FH5jVT22mW5acA=",
+			"path": "github.com/ugorji/go/codec",
+			"revision": "42bc974514ff101a54c6b72a0e4dee29d96c0b26",
+			"revisionTime": "2019-08-12T10:43:08Z"
 		},
 		{
 			"checksumSHA1": "4JeqOqxJwpFPYXjYy6PCfUb+Flg=",
@@ -2340,11 +2424,17 @@
 			"revisionTime": "2019-02-13T19:54:35Z"
 		},
 		{
+			"checksumSHA1": "Pxy1kmAM4h2XhsWnaWN+fIL3ju4=",
+			"path": "gopkg.in/go-playground/validator.v9",
+			"revision": "cd1bd581694a11c089aea885a26247c5f783a4cf",
+			"revisionTime": "2019-09-29T22:20:42Z"
+		},
+		{
 			"checksumSHA1": "QqDq2x8XOU7IoOR98Cx1eiV5QY8=",
 			"path": "gopkg.in/yaml.v2",
 			"revision": "51d6538a90f86fe93ac480b35f37b2be17fef232",
 			"revisionTime": "2018-11-15T11:05:04Z"
 		}
 	],
-	"rootPath": "fabric-sdk-go"
+	"rootPath": "fabric-byzantine"
 }

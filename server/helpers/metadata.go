@@ -8,12 +8,12 @@ SPDX-License-Identifier: Apache-2.0
 package helpers
 
 // ChannelConfigPath is the relative path to the generated channel artifacts directory
-var ChannelConfigPath = "artifacts/channel"
+var ChannelConfigPath = "channel-artifacts"
 
 // CryptoConfigPath is the relative path to the generated crypto config directory
-var CryptoConfigPath = "artifacts/channel/crypto-config"
+var CryptoConfigPath = "crypto-config"
 
 // Project is the Go project name relative to the Go Path
-var Project = "fabric-sdk-go"
+var Project = "fabric-byzantine"
 
 type TransactionID string

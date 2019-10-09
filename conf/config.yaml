@@ -65,7 +65,7 @@ client:
 
   # Root of the MSP directories with keys and certs.
   cryptoconfig:
-    path: ${GOPATH}/src/fabric-sdk-go/artifacts/crypto-config
+    path: ${GOPATH}/src/fabric-byzantine/crypto-config
 
   # Some SDKs support pluggable KV stores, the properties under "credentialStore"
   # are implementation specific
@@ -103,6 +103,81 @@ client:
 tls:
   example:
     com:
+
+peerList: &peerList
+  peer0.org1.example.com:
+    # [Optional]. will this peer be sent transaction proposals for endorsement? The peer must
+    # have the chaincode installed. The app can also use this property to decide which peers
+    # to send the chaincode install request. Default: true
+    endorsingPeer: true
+
+    # [Optional]. will this peer be sent query proposals? The peer must have the chaincode
+    # installed. The app can also use this property to decide which peers to send the
+    # chaincode install request. Default: true
+    chaincodeQuery: true
+
+    # [Optional]. will this peer be sent query proposals that do not require chaincodes, like
+    # queryBlock(), queryTransaction(), etc. Default: true
+    ledgerQuery: true
+
+    # [Optional]. will this peer be the target of the SDK's listener registration? All peers can
+    # produce events but the app typically only needs to connect to one to listen to events.
+    # Default: true
+    eventSource: true
+
+  peer0.org2.example.com:
+    endorsingPeer: true
+    chaincodeQuery: true
+    ledgerQuery: true
+    eventSource: true
+
+  peer0.org3.example.com:
+    endorsingPeer: true
+    chaincodeQuery: true
+    ledgerQuery: true
+    eventSource: true
+
+  peer0.org4.example.com:
+    endorsingPeer: true
+    chaincodeQuery: true
+    ledgerQuery: true
+    eventSource: true
+
+  peer0.org5.example.com:
+    endorsingPeer: true
+    chaincodeQuery: true
+    ledgerQuery: true
+    eventSource: true
+
+  peer0.org6.example.com:
+    endorsingPeer: true
+    chaincodeQuery: true
+    ledgerQuery: true
+    eventSource: true
+
+  peer0.org7.example.com:
+    endorsingPeer: true
+    chaincodeQuery: true
+    ledgerQuery: true
+    eventSource: true
+
+  peer0.org8.example.com:
+    endorsingPeer: true
+    chaincodeQuery: true
+    ledgerQuery: true
+    eventSource: true
+
+  peer0.org9.example.com:
+    endorsingPeer: true
+    chaincodeQuery: true
+    ledgerQuery: true
+    eventSource: true
+
+  peer0.org10.example.com:
+    endorsingPeer: true
+    chaincodeQuery: true
+    ledgerQuery: true
+    eventSource: true
 #
 # [Optional]. But most apps would have this section so that channel objects can be constructed
 # based on the content below. If an app is creating channels, then it likely will not need this
@@ -111,7 +186,7 @@ tls:
 channels:
   #[Required if _default not defined; Optional if _default defined].
   # name of the channel
-  mychannel:
+  mychannel1:
 
     # list of orderers designated by the application to use for transactions on this
     # channel. This list can be a result of access control ("org1" can only access "ordererA"), or
@@ -124,85 +199,44 @@ channels:
     #[Required if _default peers not defined; Optional if _default peers defined].
     # list of peers from participating orgs
     peers:
-      peer0.org1.example.com:
-        # [Optional]. will this peer be sent transaction proposals for endorsement? The peer must
-        # have the chaincode installed. The app can also use this property to decide which peers
-        # to send the chaincode install request. Default: true
-        endorsingPeer: true
+      *peerList
 
-        # [Optional]. will this peer be sent query proposals? The peer must have the chaincode
-        # installed. The app can also use this property to decide which peers to send the
-        # chaincode install request. Default: true
-        chaincodeQuery: true
+  mychannel2:
+    peers:
+      *peerList
 
-        # [Optional]. will this peer be sent query proposals that do not require chaincodes, like
-        # queryBlock(), queryTransaction(), etc. Default: true
-        ledgerQuery: true
+  mychannel3:
+    peers:
+      *peerList
 
-        # [Optional]. will this peer be the target of the SDK's listener registration? All peers can
-        # produce events but the app typically only needs to connect to one to listen to events.
-        # Default: true
-        eventSource: true
+  mychannel4:
+    peers:
+      *peerList
 
-      peer1.org1.example.com:
-        # [Optional]. will this peer be sent transaction proposals for endorsement? The peer must
-        # have the chaincode installed. The app can also use this property to decide which peers
-        # to send the chaincode install request. Default: true
-        endorsingPeer: true
+  mychannel5:
+    peers:
+      *peerList
 
-        # [Optional]. will this peer be sent query proposals? The peer must have the chaincode
-        # installed. The app can also use this property to decide which peers to send the
-        # chaincode install request. Default: true
-        chaincodeQuery: true
+  mychannel6:
+    peers:
+      *peerList
 
-        # [Optional]. will this peer be sent query proposals that do not require chaincodes, like
-        # queryBlock(), queryTransaction(), etc. Default: true
-        ledgerQuery: true
+  mychannel7:
+    peers:
+      *peerList
 
-        # [Optional]. will this peer be the target of the SDK's listener registration? All peers can
-        # produce events but the app typically only needs to connect to one to listen to events.
-        # Default: true
-        eventSource: true
+  mychannel8:
+    peers:
+      *peerList
 
-      peer0.org2.example.com:
-        # [Optional]. will this peer be sent transaction proposals for endorsement? The peer must
-        # have the chaincode installed. The app can also use this property to decide which peers
-        # to send the chaincode install request. Default: true
-        endorsingPeer: true
+  mychannel9:
+    peers:
+      *peerList
 
-        # [Optional]. will this peer be sent query proposals? The peer must have the chaincode
-        # installed. The app can also use this property to decide which peers to send the
-        # chaincode install request. Default: true
-        chaincodeQuery: true
+  mychannel10:
+    peers:
+      *peerList
 
-        # [Optional]. will this peer be sent query proposals that do not require chaincodes, like
-        # queryBlock(), queryTransaction(), etc. Default: true
-        ledgerQuery: true
-
-        # [Optional]. will this peer be the target of the SDK's listener registration? All peers can
-        # produce events but the app typically only needs to connect to one to listen to events.
-        # Default: true
-        eventSource: true
-
-      peer1.org2.example.com:
-        # [Optional]. will this peer be sent transaction proposals for endorsement? The peer must
-        # have the chaincode installed. The app can also use this property to decide which peers
-        # to send the chaincode install request. Default: true
-        endorsingPeer: true
-
-        # [Optional]. will this peer be sent query proposals? The peer must have the chaincode
-        # installed. The app can also use this property to decide which peers to send the
-        # chaincode install request. Default: true
-        chaincodeQuery: true
-
-        # [Optional]. will this peer be sent query proposals that do not require chaincodes, like
-        # queryBlock(), queryTransaction(), etc. Default: true
-        ledgerQuery: true
-
-        # [Optional]. will this peer be the target of the SDK's listener registration? All peers can
-        # produce events but the app typically only needs to connect to one to listen to events.
-        # Default: true
-        eventSource: true
 #
 # list of participating organizations in this network
 #
@@ -215,7 +249,6 @@ organizations:
 
     peers:
       - peer0.org1.example.com
-      - peer1.org1.example.com
 
     # [Optional]. Certificate Authorities issue certificates for identification purposes in a Fabric based
     # network. Typically certificates provisioning is done in a separate process outside of the
@@ -233,7 +266,55 @@ organizations:
 
     peers:
       - peer0.org2.example.com
-      - peer1.org2.example.com
+
+  Org3:
+    mspid: Org3MSP
+    cryptoPath: peerOrganizations/org3.example.com/users/{username}@org3.example.com/msp
+    peers:
+      - peer0.org3.example.com
+
+  Org4:
+    mspid: Org4MSP
+    cryptoPath: peerOrganizations/org4.example.com/users/{username}@org4.example.com/msp
+    peers:
+      - peer0.org4.example.com
+
+  Org5:
+    mspid: Org5MSP
+    cryptoPath: peerOrganizations/org5.example.com/users/{username}@org5.example.com/msp
+    peers:
+      - peer0.org5.example.com
+
+  Org6:
+    mspid: Org6MSP
+    cryptoPath: peerOrganizations/org6.example.com/users/{username}@org6.example.com/msp
+    peers:
+      - peer0.org6.example.com
+
+  Org7:
+    mspid: Org7MSP
+    cryptoPath: peerOrganizations/org7.example.com/users/{username}@org7.example.com/msp
+    peers:
+      - peer0.org7.example.com
+
+  Org8:
+    mspid: Org8MSP
+    cryptoPath: peerOrganizations/org8.example.com/users/{username}@org8.example.com/msp
+    peers:
+      - peer0.org8.example.com
+
+  Org9:
+    mspid: Org9MSP
+    cryptoPath: peerOrganizations/org9.example.com/users/{username}@org9.example.com/msp
+    peers:
+      - peer0.org9.example.com
+
+  Org10:
+    mspid: Org10MSP
+    cryptoPath: peerOrganizations/org10.example.com/users/{username}@org10.example.com/msp
+    peers:
+      - peer0.org10.example.com
+
 
     # [Optional]. Certificate Authorities issue certificates for identification purposes in a Fabric based
     # network. Typically certificates provisioning is done in a separate process outside of the
@@ -276,7 +357,7 @@ orderers:
 
     tlsCACerts:
       # Certificate location absolute path
-      path: ${GOPATH}/src/fabric-sdk-go/artifacts/crypto-config/ordererOrganizations/example.com/tlsca/tlsca.example.com-cert.pem
+      path: ${GOPATH}/src/fabric-byzantine/crypto-config/ordererOrganizations/example.com/tlsca/tlsca.example.com-cert.pem
 
 #
 # List of peers to send various requests to, including endorsement, query
@@ -302,28 +383,7 @@ peers:
 
     tlsCACerts:
       # Certificate location absolute path
-      path: ${GOPATH}/src/fabric-sdk-go/artifacts/crypto-config/peerOrganizations/org1.example.com/tlsca/tlsca.org1.example.com-cert.pem
-
-  peer1.org1.example.com:
-    # this URL is used to send endorsement and query requests
-    # [Optional] Default: Infer from hostname
-    url: peer1.org1.example.com:8051
-
-    grpcOptions:
-      ssl-target-name-override: peer1.org1.example.com
-      # These parameters should be set in coordination with the keepalive policy on the server,
-      # as incompatible settings can result in closing of connection.
-      # When duration of the 'keep-alive-time' is set to 0 or less the keep alive client parameters are disabled
-      keep-alive-time: 0s
-      keep-alive-timeout: 20s
-      keep-alive-permit: false
-      fail-fast: false
-      # allow-insecure will be taken into consideration if address has no protocol defined, if true then grpc or else grpcs
-      allow-insecure: false
-
-    tlsCACerts:
-      # Certificate location absolute path
-      path: ${GOPATH}/src/fabric-sdk-go/artifacts/crypto-config/peerOrganizations/org1.example.com/tlsca/tlsca.org1.example.com-cert.pem
+      path: ${GOPATH}/src/fabric-byzantine/crypto-config/peerOrganizations/org1.example.com/tlsca/tlsca.org1.example.com-cert.pem
 
   peer0.org2.example.com:
     # this URL is used to send endorsement and query requests
@@ -344,28 +404,103 @@ peers:
 
     tlsCACerts:
       # Certificate location absolute path
-      path: ${GOPATH}/src/fabric-sdk-go/artifacts/crypto-config/peerOrganizations/org2.example.com/tlsca/tlsca.org2.example.com-cert.pem
+      path: ${GOPATH}/src/fabric-byzantine/crypto-config/peerOrganizations/org2.example.com/tlsca/tlsca.org2.example.com-cert.pem
 
-  peer1.org2.example.com:
-    # this URL is used to send endorsement and query requests
-    # [Optional] Default: Infer from hostname
-    url: peer1.org2.example.com:10051
-
+  peer0.org3.example.com:
+    url: peer0.org3.example.com:11051
     grpcOptions:
-      ssl-target-name-override: peer1.org2.example.com
-      # These parameters should be set in coordination with the keepalive policy on the server,
-      # as incompatible settings can result in closing of connection.
-      # When duration of the 'keep-alive-time' is set to 0 or less the keep alive client parameters are disabled
+      ssl-target-name-override: peer0.org3.example.com
       keep-alive-time: 0s
       keep-alive-timeout: 20s
       keep-alive-permit: false
       fail-fast: false
-      # allow-insecure will be taken into consideration if address has no protocol defined, if true then grpc or else grpcs
       allow-insecure: false
-
     tlsCACerts:
-      # Certificate location absolute path
-      path: ${GOPATH}/src/fabric-sdk-go/artifacts/crypto-config/peerOrganizations/org2.example.com/tlsca/tlsca.org2.example.com-cert.pem
+      path: ${GOPATH}/src/fabric-byzantine/crypto-config/peerOrganizations/org3.example.com/tlsca/tlsca.org3.example.com-cert.pem
+
+  peer0.org4.example.com:
+    url: peer0.org4.example.com:13051
+    grpcOptions:
+      ssl-target-name-override: peer0.org4.example.com
+      keep-alive-time: 0s
+      keep-alive-timeout: 20s
+      keep-alive-permit: false
+      fail-fast: false
+      allow-insecure: false
+    tlsCACerts:
+      path: ${GOPATH}/src/fabric-byzantine/crypto-config/peerOrganizations/org4.example.com/tlsca/tlsca.org4.example.com-cert.pem
+
+  peer0.org5.example.com:
+    url: peer0.org5.example.com:15051
+    grpcOptions:
+      ssl-target-name-override: peer0.org5.example.com
+      keep-alive-time: 0s
+      keep-alive-timeout: 20s
+      keep-alive-permit: false
+      fail-fast: false
+      allow-insecure: false
+    tlsCACerts:
+      path: ${GOPATH}/src/fabric-byzantine/crypto-config/peerOrganizations/org5.example.com/tlsca/tlsca.org5.example.com-cert.pem
+
+  peer0.org6.example.com:
+    url: peer0.org6.example.com:17051
+    grpcOptions:
+      ssl-target-name-override: peer0.org6.example.com
+      keep-alive-time: 0s
+      keep-alive-timeout: 20s
+      keep-alive-permit: false
+      fail-fast: false
+      allow-insecure: false
+    tlsCACerts:
+      path: ${GOPATH}/src/fabric-byzantine/crypto-config/peerOrganizations/org6.example.com/tlsca/tlsca.org6.example.com-cert.pem
+
+  peer0.org7.example.com:
+    url: peer0.org7.example.com:19051
+    grpcOptions:
+      ssl-target-name-override: peer0.org7.example.com
+      keep-alive-time: 0s
+      keep-alive-timeout: 20s
+      keep-alive-permit: false
+      fail-fast: false
+      allow-insecure: false
+    tlsCACerts:
+      path: ${GOPATH}/src/fabric-byzantine/crypto-config/peerOrganizations/org7.example.com/tlsca/tlsca.org7.example.com-cert.pem
+
+  peer0.org8.example.com:
+    url: peer0.org3.example.com:21051
+    grpcOptions:
+      ssl-target-name-override: peer0.org8.example.com
+      keep-alive-time: 0s
+      keep-alive-timeout: 20s
+      keep-alive-permit: false
+      fail-fast: false
+      allow-insecure: false
+    tlsCACerts:
+      path: ${GOPATH}/src/fabric-byzantine/crypto-config/peerOrganizations/org8.example.com/tlsca/tlsca.org8.example.com-cert.pem
+
+  peer0.org9.example.com:
+    url: peer0.org3.example.com:23051
+    grpcOptions:
+      ssl-target-name-override: peer0.org9.example.com
+      keep-alive-time: 0s
+      keep-alive-timeout: 20s
+      keep-alive-permit: false
+      fail-fast: false
+      allow-insecure: false
+    tlsCACerts:
+      path: ${GOPATH}/src/fabric-byzantine/crypto-config/peerOrganizations/org9.example.com/tlsca/tlsca.org9.example.com-cert.pem
+
+  peer0.org10.example.com:
+    url: peer0.org10.example.com:25051
+    grpcOptions:
+      ssl-target-name-override: peer0.org10.example.com
+      keep-alive-time: 0s
+      keep-alive-timeout: 20s
+      keep-alive-permit: false
+      fail-fast: false
+      allow-insecure: false
+    tlsCACerts:
+      path: ${GOPATH}/src/fabric-byzantine/crypto-config/peerOrganizations/org10.example.com/tlsca/tlsca.org10.example.com-cert.pem
 
 #
 # Fabric-CA is a special kind of Certificate Authority provided by Hyperledger Fabric which allows
@@ -431,21 +566,51 @@ entityMatchers:
       eventUrlSubstitutionExp: localhost:7053
       sslTargetOverrideUrlSubstitutionExp: peer0.org1.example.com
       mappedHost: peer0.org1.example.com
-    - pattern: (\w*)peer1.org1.example.com(\w*)
-      urlSubstitutionExp: localhost:8051
-      eventUrlSubstitutionExp: localhost:8053
-      sslTargetOverrideUrlSubstitutionExp: peer1.org1.example.com
-      mappedHost: peer1.org1.example.com
     - pattern: (\w*)peer0.org2.example.com(\w*)
       urlSubstitutionExp: localhost:9051
       eventUrlSubstitutionExp: localhost:9053
       sslTargetOverrideUrlSubstitutionExp: peer0.org2.example.com
       mappedHost: peer0.org2.example.com
-    - pattern: (\w*)peer1.org2.example.com(\w*)
-      urlSubstitutionExp: localhost:10051
-      eventUrlSubstitutionExp: localhost:10053
-      sslTargetOverrideUrlSubstitutionExp: peer1.org2.example.com
-      mappedHost: peer1.org2.example.com
+    - pattern: (\w*)peer0.org3.example.com(\w*)
+      urlSubstitutionExp: localhost:11051
+      eventUrlSubstitutionExp: localhost:11053
+      sslTargetOverrideUrlSubstitutionExp: peer0.org3.example.com
+      mappedHost: peer0.org3.example.com
+    - pattern: (\w*)peer0.org4.example.com(\w*)
+      urlSubstitutionExp: localhost:13051
+      eventUrlSubstitutionExp: localhost:13053
+      sslTargetOverrideUrlSubstitutionExp: peer0.org4.example.com
+      mappedHost: peer0.org4.example.com
+    - pattern: (\w*)peer0.org5.example.com(\w*)
+      urlSubstitutionExp: localhost:15051
+      eventUrlSubstitutionExp: localhost:15053
+      sslTargetOverrideUrlSubstitutionExp: peer0.org5.example.com
+      mappedHost: peer0.org5.example.com
+    - pattern: (\w*)peer0.org6.example.com(\w*)
+      urlSubstitutionExp: localhost:17051
+      eventUrlSubstitutionExp: localhost:17053
+      sslTargetOverrideUrlSubstitutionExp: peer0.org6.example.com
+      mappedHost: peer0.org6.example.com
+    - pattern: (\w*)peer0.org7.example.com(\w*)
+      urlSubstitutionExp: localhost:19051
+      eventUrlSubstitutionExp: localhost:19053
+      sslTargetOverrideUrlSubstitutionExp: peer0.org7.example.com
+      mappedHost: peer0.org7.example.com
+    - pattern: (\w*)peer0.org8.example.com(\w*)
+      urlSubstitutionExp: localhost:21051
+      eventUrlSubstitutionExp: localhost:21053
+      sslTargetOverrideUrlSubstitutionExp: peer0.org8.example.com
+      mappedHost: peer0.org8.example.com
+    - pattern: (\w*)peer0.org9.example.com(\w*)
+      urlSubstitutionExp: localhost:23051
+      eventUrlSubstitutionExp: localhost:23053
+      sslTargetOverrideUrlSubstitutionExp: peer0.org9.example.com
+      mappedHost: peer0.org9.example.com
+    - pattern: (\w*)peer0.org10.example.com(\w*)
+      urlSubstitutionExp: localhost:25051
+      eventUrlSubstitutionExp: localhost:25053
+      sslTargetOverrideUrlSubstitutionExp: peer0.org10.example.com
+      mappedHost: peer0.org10.example.com
 
   orderer:
     - pattern: (\w*)orderer.example.com(\w*)

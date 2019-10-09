@@ -1,41 +1,36 @@
 package main
 
 import (
-	"fabric-sdk-go/server"
-	"fmt"
-	"os"
+	"fabric-byzantine/server"
+	"fabric-byzantine/server/helpers"
+	"net/http"
 
-	"github.com/spf13/cobra"
+	"github.com/gin-gonic/gin"
 )
 
-var rootCmd = &cobra.Command{
-	Use:   "grpc",
-	Short: "Run the gRPC fabric-sdk server",
-}
-
-var serverCmd = &cobra.Command{
-	Use:   "start",
-	Short: "Run the gRPC fabric-sdk server",
-	Run: func(cmd *cobra.Command, args []string) {
-		defer func() {
-			if err := recover(); err != nil {
-				fmt.Printf("Recover error : %v", err)
-			}
-		}()
-
-		err := server.Run()
-		fmt.Printf("server run error : %v", err)
-	},
-}
-
-func init() {
-	serverCmd.Flags().StringVarP(&server.ServerPort, "port", "p", "8080", "server port")
-
-	rootCmd.AddCommand(serverCmd)
-}
+var logger = helpers.GetLogger()
 
 func main() {
-	if err := rootCmd.Execute(); err != nil {
-		os.Exit(-1)
-	}
+	router := gin.Default()
+	router.GET("/query/:channel", func(c *gin.Context) {
+		channel := c.Param("channel")
+		data, err := server.GetSdkProvider().QueryCC(channel, "token", "balance", [][]byte{[]byte("fab"), []byte("alice")})
+		if err != nil {
+			logger.Error("query err: %v", err)
+			c.JSON(http.StatusOK, err)
+		} else {
+			c.JSON(http.StatusOK, data)
+		}
+	})
+
+	router.POST("/invoke", func(c *gin.Context) {
+		message := c.PostForm("message")
+
+		c.JSON(200, gin.H{
+			"status":  "posted",
+			"message": message,
+		})
+	})
+
+	_ = router.Run(":8080")
 }
