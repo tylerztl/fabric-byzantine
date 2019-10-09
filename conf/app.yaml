@@ -10,6 +10,30 @@ application:
     - name: Org2
       admin: Admin
       user: User1
+    - name: Org3
+      admin: Admin
+      user: User1
+    - name: Org4
+      admin: Admin
+      user: User1
+    - name: Org5
+      admin: Admin
+      user: User1
+    - name: Org6
+      admin: Admin
+      user: User1
+    - name: Org7
+      admin: Admin
+      user: User1
+    - name: Org8
+      admin: Admin
+      user: User1
+    - name: Org9
+      admin: Admin
+      user: User1
+    - name: Org10
+      admin: Admin
+      user: User1
   orderer:
     - name: Orderer
       admin: Admin

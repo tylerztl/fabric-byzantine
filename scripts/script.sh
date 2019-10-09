@@ -42,12 +42,12 @@ createChannel() {
 
 	if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
                 set -x
-		peer channel create -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/$CHANNEL_NAME.tx >&log.txt
+		peer channel create -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/$CHANNEL_NAME/$CHANNEL_NAME.tx >&log.txt
 		res=$?
                 set +x
 	else
 				set -x
-		peer channel create -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/$CHANNEL_NAME.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA >&log.txt
+		peer channel create -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/$CHANNEL_NAME/$CHANNEL_NAME.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA >&log.txt
 		res=$?
 				set +x
 	fi
@@ -76,11 +76,27 @@ createChannel
 echo "Having all peers join the channel..."
 joinChannel
 
-## Set the anchor peers for each org in the channel
-#echo "Updating anchor peers for org1..."
-#updateAnchorPeers 0 1
-#echo "Updating anchor peers for org2..."
-#updateAnchorPeers 0 2
+# Set the anchor peers for each org in the channel
+echo "Updating anchor peers for org1..."
+updateAnchorPeers 0 1
+echo "Updating anchor peers for org2..."
+updateAnchorPeers 0 2
+echo "Updating anchor peers for org3..."
+updateAnchorPeers 0 3
+echo "Updating anchor peers for org4..."
+updateAnchorPeers 0 4
+echo "Updating anchor peers for org5..."
+updateAnchorPeers 0 5
+echo "Updating anchor peers for org6..."
+updateAnchorPeers 0 6
+echo "Updating anchor peers for org7..."
+updateAnchorPeers 0 7
+echo "Updating anchor peers for org8..."
+updateAnchorPeers 0 8
+echo "Updating anchor peers for org9..."
+updateAnchorPeers 0 9
+echo "Updating anchor peers for org10..."
+updateAnchorPeers 0 10
 
 ## Install chaincode on peer0.org1 and peer0.org2
 echo "Installing chaincode on peer0.org1..."
