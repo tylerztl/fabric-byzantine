@@ -29,12 +29,6 @@ func (token *Token) balance(_from string) int {
 	return token.BalanceOf[_from]
 }
 
-type Account struct {
-	Owner     string `json:"Owner"`
-	TokenName string `json:"TokenName"`
-	Balance   int    `json:"BalanceOf"`
-}
-
 // Define the Smart Contract structure
 type TokenContract struct {
 }
@@ -193,17 +187,11 @@ func (s *TokenContract) balance(stub shim.ChaincodeStubInterface, args []string)
 	}
 	fmt.Println("json Unmarshal succeed:", token)
 	amount := token.balance(args[1])
-
-	account := Account{
-		Owner:     args[1],
-		TokenName: token.TokenName,
-		Balance:   amount,
-	}
 	value := strconv.Itoa(amount)
-	tokenAsBytes, _ = json.Marshal(account)
+
 	fmt.Printf("%s balance is %s \n", args[1], value)
 
-	return shim.Success(tokenAsBytes)
+	return shim.Success([]byte(value))
 }
 
 func (s *TokenContract) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
