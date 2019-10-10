@@ -4,16 +4,17 @@ import (
 	"errors"
 	"fabric-byzantine/server/helpers"
 	"fmt"
-	"github.com/hyperledger/fabric-sdk-go/pkg/client/event"
-	"github.com/hyperledger/fabric-sdk-go/pkg/fab/events/deliverclient/seek"
 
 	"github.com/hyperledger/fabric-sdk-go/pkg/client/channel"
+	"github.com/hyperledger/fabric-sdk-go/pkg/client/event"
+	"github.com/hyperledger/fabric-sdk-go/pkg/client/ledger"
 	mspclient "github.com/hyperledger/fabric-sdk-go/pkg/client/msp"
 	"github.com/hyperledger/fabric-sdk-go/pkg/client/resmgmt"
 	"github.com/hyperledger/fabric-sdk-go/pkg/common/errors/retry"
 	contextAPI "github.com/hyperledger/fabric-sdk-go/pkg/common/providers/context"
 	"github.com/hyperledger/fabric-sdk-go/pkg/common/providers/fab"
 	"github.com/hyperledger/fabric-sdk-go/pkg/core/config"
+	"github.com/hyperledger/fabric-sdk-go/pkg/fab/events/deliverclient/seek"
 	"github.com/hyperledger/fabric-sdk-go/pkg/fabsdk"
 )
 
@@ -182,5 +183,10 @@ func (f *FabSdkProvider) BlockListener(channelID string) {
 	if err != nil {
 		panic(fmt.Sprintf("Failed to create new events client with block events: %s", err))
 	}
+	ledgerClient, err := ledger.New(userContext)
+	if err != nil {
+		panic(fmt.Sprintf("Failed to create new ledger client: %s", err))
+	}
+	syncBlock(ledgerClient, orgInstance.Peers[0])
 	registerBlockEvent(eventClient)
 }

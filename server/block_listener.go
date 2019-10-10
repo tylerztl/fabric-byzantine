@@ -3,11 +3,12 @@ package server
 import (
 	"encoding/hex"
 	"fabric-byzantine/server/mysql"
-	"strconv"
+	"fmt"
 	"time"
 
-	"github.com/golang/protobuf/proto"
 	"github.com/hyperledger/fabric-sdk-go/pkg/client/event"
+	"github.com/hyperledger/fabric-sdk-go/pkg/client/ledger"
+	"github.com/hyperledger/fabric-sdk-go/pkg/common/providers/fab"
 	cb "github.com/hyperledger/fabric-sdk-go/third_party/github.com/hyperledger/fabric/protos/common"
 	"github.com/hyperledger/fabric/protos/utils"
 )
@@ -62,18 +63,7 @@ func updateBlock(block *cb.Block) {
 		txTimestamp := channelHeader.Timestamp
 		txTime = time.Unix(txTimestamp.GetSeconds(), int64(txTimestamp.GetNanos()))
 
-		msg := cb.ConfigValue{}
-		if err := proto.Unmarshal(payload.Data, &msg); err != nil {
-			logger.Error("Error proto unmarshal", err)
-			break
-		}
-		txId, err := strconv.ParseUint(string(msg.Value), 10, 64)
-		if err != nil {
-			logger.Error("Error ParseUint:", err)
-			break
-		}
-
-		logger.Debug("Seek block number:%d, payload:%d", block.Header.Number, txId)
+		logger.Debug("Seek block number:%d", block.Header.Number)
 		_, err = begin.Stmt(mysql.GetStmtTx()).Exec(block.Header.Number*uint64(appConf.TxNumPerBlock)+uint64(i), channelHeader.TxId, "", "", "", 0, txTime)
 		if err != nil {
 			logger.Warn(err.Error()) // proper error handling instead of panic in your app
@@ -98,4 +88,12 @@ func updateBlock(block *cb.Block) {
 	if err != nil {
 		logger.Warn(err.Error())
 	}
+}
+
+func syncBlock(ledgerClient *ledger.Client, targets fab.Peer) {
+	ledgerInfoBefore, err := ledgerClient.QueryInfo(ledger.WithTargets(targets), ledger.WithMinTargets(1), ledger.WithMaxTargets(10))
+	if err != nil {
+		panic(fmt.Sprintf("QueryInfo return error: %s", err))
+	}
+	logger.Info("current block height: %d", ledgerInfoBefore.BCI.Height)
 }
