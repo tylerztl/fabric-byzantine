@@ -3,14 +3,14 @@ package server
 import (
 	"encoding/hex"
 	"fabric-byzantine/server/mysql"
+	"fabric-byzantine/server/protoutil"
 	"fmt"
 	"time"
 
+	cb "github.com/hyperledger/fabric-protos-go/common"
 	"github.com/hyperledger/fabric-sdk-go/pkg/client/event"
 	"github.com/hyperledger/fabric-sdk-go/pkg/client/ledger"
 	"github.com/hyperledger/fabric-sdk-go/pkg/common/providers/fab"
-	cb "github.com/hyperledger/fabric-sdk-go/third_party/github.com/hyperledger/fabric/protos/common"
-	"github.com/hyperledger/fabric/protos/utils"
 )
 
 func registerBlockEvent(eventClient *event.Client) {
@@ -48,18 +48,17 @@ func updateBlock(block *cb.Block) {
 	txLen := len(block.Data.Data)
 	var txTime time.Time
 	for i, envBytes := range block.Data.Data {
-		envelope, err := utils.GetEnvelopeFromBlock(envBytes)
+		envelope, err := protoutil.GetEnvelopeFromBlock(envBytes)
 		if err != nil {
 			logger.Error("Error GetEnvelopeFromBlock:", err)
 			break
 		}
-		payload, err := utils.GetPayload(envelope)
+		payload, err := protoutil.UnmarshalPayload(envelope.Payload)
 		if err != nil {
-			logger.Error("Error GetPayload:", err)
-			break
+			logger.Error("error extracting payload from block: %s", err)
+			continue
 		}
-
-		channelHeader, _ := utils.UnmarshalChannelHeader(payload.Header.ChannelHeader)
+		channelHeader, _ := protoutil.UnmarshalChannelHeader(payload.Header.ChannelHeader)
 		txTimestamp := channelHeader.Timestamp
 		txTime = time.Unix(txTimestamp.GetSeconds(), int64(txTimestamp.GetNanos()))
 
