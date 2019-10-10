@@ -1,0 +1,22 @@
+
+version: '2'
+
+networks:
+  byfn:
+
+services:
+  blockchain-mysql:
+    container_name: blockchain-mysql
+    image: zhigui/zigerface-mysql:x86_64-0.1.0
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=zhigui
+    ports:
+      - 3306:3306
+    volumes:
+      - /tmp/mysql/:/var/lib/mysql
+      - ./scripts/db/init_peer.sql:/usr/local/work/init_peer.sql
+      - ./scripts/db/explore.sql:/usr/local/work/explore.sql
+      - ./scripts/db/mysqld.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
+    networks:
+      - byfn

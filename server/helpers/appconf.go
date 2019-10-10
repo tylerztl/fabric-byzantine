@@ -12,10 +12,12 @@ type AppConf struct {
 }
 
 type Application struct {
-	LogPath      string          `yaml:"logPath"`
-	LogLevel     int8            `yaml:"logLevel"`
-	OrgInfo      []*OrgInfo      `yaml:"org"`
-	OrderderInfo []*OrderderInfo `yaml:"orderer"`
+	LogPath       string          `yaml:"logPath"`
+	LogLevel      int8            `yaml:"logLevel"`
+	OrgInfo       []*OrgInfo      `yaml:"org"`
+	OrderderInfo  []*OrderderInfo `yaml:"orderer"`
+	DB            *DBInfo         `yaml:"db"`
+	TxNumPerBlock int64           `yaml:"txNumPerBlock"`
 }
 
 type OrgInfo struct {
@@ -28,6 +30,16 @@ type OrderderInfo struct {
 	Name     string `yaml:"name"`
 	Admin    string `yaml:"admin"`
 	Endpoint string `yaml:"endpoint"`
+}
+
+type DBInfo struct {
+	User         string `yaml:"user"`
+	Password     string `yaml:"password"`
+	Name         string `yaml:"name"`
+	Host         string `yaml:"host"`
+	Port         string `yaml:"port"`
+	MaxOpenConns int    `yaml:"maxOpenConns"`
+	MaxIdleConns int    `yaml:"maxIdleConns"`
 }
 
 var appConfig = new(AppConf)

@@ -38,3 +38,12 @@ application:
     - name: Orderer
       admin: Admin
       endpoint: orderer.example.com
+  db:
+    user: root
+    password: zhigui
+    name: explore
+    host: localhost #blockchain-mysql
+    port: 3306
+    maxOpenConns: 10000
+    maxIdleConns: 1000
+  txNumPerBlock: 100

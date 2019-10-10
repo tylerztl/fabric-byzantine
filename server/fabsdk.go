@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fabric-byzantine/server/helpers"
 	"fmt"
+	"github.com/hyperledger/fabric-sdk-go/pkg/client/event"
+	"github.com/hyperledger/fabric-sdk-go/pkg/fab/events/deliverclient/seek"
 
 	"github.com/hyperledger/fabric-sdk-go/pkg/client/channel"
 	mspclient "github.com/hyperledger/fabric-sdk-go/pkg/client/msp"
@@ -169,4 +171,16 @@ func (f *FabSdkProvider) QueryCC(channelID, ccID, function string, args [][]byte
 	logger.Debug("Successfully query chaincode  ccName[%s] func[%v] payload[%v]",
 		ccID, function, response.Payload)
 	return response.Payload, nil
+}
+
+func (f *FabSdkProvider) BlockListener(channelID string) {
+	orgInstance := f.Orgs[0]
+	//prepare context
+	userContext := f.Sdk.ChannelContext(channelID, fabsdk.WithUser(orgInstance.Config.User), fabsdk.WithOrg(orgInstance.Config.Name))
+	// create event client with block events
+	eventClient, err := event.New(userContext, event.WithBlockEvents(), event.WithSeekType(seek.Newest))
+	if err != nil {
+		panic(fmt.Sprintf("Failed to create new events client with block events: %s", err))
+	}
+	registerBlockEvent(eventClient)
 }

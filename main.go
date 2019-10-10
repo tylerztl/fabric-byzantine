@@ -11,6 +11,8 @@ import (
 var logger = helpers.GetLogger()
 
 func main() {
+	server.GetSdkProvider().BlockListener("mychannel1")
+
 	router := gin.Default()
 	router.GET("/query/:channel", func(c *gin.Context) {
 		channel := c.Param("channel")

@@ -7,6 +7,7 @@ import (
 type SdkProvider interface {
 	InvokeCC(channelID, ccID, function string, args [][]byte) ([]byte, TransactionID, error)
 	QueryCC(channelID, ccID, function string, args [][]byte) ([]byte, error)
+	BlockListener(channelID string)
 }
 
 type Handler struct {
