@@ -47,6 +47,29 @@ func init() {
 	dbMgr = &DBMgr{db, stmtTx, stmtBlock}
 }
 
+func (m *DBMgr) GetBlockHeight() uint64 {
+	rows, err := m.db.Query("select max(number) as height from block")
+	if err != nil {
+		panic(err.Error())
+	}
+	columns, err := rows.Columns()
+	if err != nil {
+		panic(err.Error())
+	}
+	if len(columns) != 1 {
+		panic("GetBlockHeight invalid height.")
+	}
+	for rows.Next() {
+		var col uint64
+		err = rows.Scan(&col)
+		if err != nil {
+			return 0
+		}
+		return col
+	}
+	return 0
+}
+
 func CloseDB() {
 	if err := dbMgr.db.Close(); err != nil {
 		panic(err)
@@ -57,6 +80,10 @@ func CloseDB() {
 	if err := dbMgr.stmtBlock.Close(); err != nil {
 		panic(err)
 	}
+}
+
+func GetDBMgr() *DBMgr {
+	return dbMgr
 }
 
 func GetDB() *sql.DB {

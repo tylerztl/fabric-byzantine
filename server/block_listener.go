@@ -20,17 +20,22 @@ func registerBlockEvent(eventClient *event.Client) {
 	}
 	defer eventClient.Unregister(reg)
 
+	flag := true
 	for {
 		select {
 		case e, ok := <-eventch:
 			if !ok {
 				logger.Error("unexpected closed channel while waiting for block event")
 			}
-			logger.Error("Received block event: %#v", e)
+			logger.Info("Received block event: %#v", e)
 			if e.Block == nil {
 				logger.Error("Expecting block in block event but got nil")
 			}
-			go updateBlock(e.Block)
+			if flag {
+				flag = false
+			} else {
+				go updateBlock(e.Block)
+			}
 		}
 	}
 }
@@ -90,9 +95,24 @@ func updateBlock(block *cb.Block) {
 }
 
 func syncBlock(ledgerClient *ledger.Client, targets fab.Peer) {
+	height := mysql.GetDBMgr().GetBlockHeight()
+	logger.Info("mysql block height: %d", height)
+
 	ledgerInfoBefore, err := ledgerClient.QueryInfo(ledger.WithTargets(targets), ledger.WithMinTargets(1), ledger.WithMaxTargets(10))
 	if err != nil {
 		panic(fmt.Sprintf("QueryInfo return error: %s", err))
 	}
 	logger.Info("current block height: %d", ledgerInfoBefore.BCI.Height)
+
+	if height > ledgerInfoBefore.BCI.Height-1 {
+		panic(fmt.Sprintf("syncBlock invalid block height: %d, %d", height, ledgerInfoBefore.BCI.Height))
+	} else if height < ledgerInfoBefore.BCI.Height-1 {
+		for i := height; i < ledgerInfoBefore.BCI.Height; i++ {
+			block, err := ledgerClient.QueryBlock(i)
+			if err != nil {
+				panic(err.Error())
+			}
+			go updateBlock(block)
+		}
+	}
 }

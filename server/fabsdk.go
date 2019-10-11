@@ -187,6 +187,6 @@ func (f *FabSdkProvider) BlockListener(channelID string) {
 	if err != nil {
 		panic(fmt.Sprintf("Failed to create new ledger client: %s", err))
 	}
-	syncBlock(ledgerClient, orgInstance.Peers[0])
+	go syncBlock(ledgerClient, orgInstance.Peers[0])
 	registerBlockEvent(eventClient)
 }
