@@ -145,8 +145,8 @@ func (f *FabSdkProvider) InvokeCC(channelID, ccID, function string, args [][]byt
 		logger.Error("Failed InvokeCC: %s", err)
 		return nil, "", err
 	}
-	logger.Debug("Successfully invoke chaincode  ccName[%s] func[%v] txId[%v] payload[%v]",
-		ccID, function, response.TransactionID, response.Payload)
+	logger.Debug("Successfully invoke chaincode  ccName[%s] func[%v] txId[%v]",
+		ccID, function, response.TransactionID)
 	return response.Payload, helpers.TransactionID(response.TransactionID), nil
 }
 
