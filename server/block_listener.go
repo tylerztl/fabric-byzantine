@@ -5,6 +5,7 @@ import (
 	"fabric-byzantine/server/mysql"
 	"fabric-byzantine/server/protoutil"
 	"fmt"
+	"strconv"
 	"time"
 
 	cb "github.com/hyperledger/fabric-protos-go/common"
@@ -67,24 +68,32 @@ func updateBlock(block *cb.Block) {
 		txTimestamp := channelHeader.Timestamp
 		txTime = time.Unix(txTimestamp.GetSeconds(), int64(txTimestamp.GetNanos()))
 
+		metadata, err := protoutil.GetMetadataFromBlock(block, cb.BlockMetadataIndex(i))
+		if err != nil {
+			logger.Error("error get metadata from block: %s", err)
+			continue
+		}
+
+		validationCode, _ := strconv.Atoi(string(metadata.Value))
+
 		logger.Debug("Seek block number:%d", block.Header.Number)
-		_, err = begin.Stmt(mysql.GetStmtTx()).Exec(block.Header.Number*uint64(appConf.TxNumPerBlock)+uint64(i), channelHeader.TxId, "", "", "", 0, txTime)
+		_, err = begin.Stmt(mysql.GetStmtTx()).Exec(block.Header.Number*uint64(appConf.TxNumPerBlock)+uint64(i), channelHeader.TxId, validationCode, txTime)
 		if err != nil {
 			logger.Warn(err.Error()) // proper error handling instead of panic in your app
 		}
 
-		//_, err = stmTx.Exec(block.Header.Number*uint64(AppConf.TxNumPerBlock)+uint64(i), channelHeader.TxId, "", "", "", 0, txTime)
+		//_, err = stmTx.Exec(block.Header.Number*uint64(AppConf.TxNumPerBlock)+uint64(i), channelHeader.TxId, validationCode, txTime)
 		//if err != nil {
 		//	Logger.Warn(err.Error()) // proper error handling instead of panic in your app
 		//}
 	}
 
-	_, err = begin.Stmt(mysql.GetStmtBlock()).Exec(block.Header.Number, hex.EncodeToString(block.Header.DataHash), txLen, 0, txTime)
+	_, err = begin.Stmt(mysql.GetStmtBlock()).Exec(block.Header.Number, hex.EncodeToString(block.Header.DataHash), txLen, txTime)
 	if err != nil {
 		logger.Warn(err.Error()) // proper error handling instead of panic in your app
 	}
 
-	//_, err = stmtIns.Exec(block.Header.Number, hex.EncodeToString(block.Header.DataHash), txLen, 0, txTime)
+	//_, err = stmtIns.Exec(block.Header.Number, hex.EncodeToString(block.Header.DataHash), txLen, txTime)
 	//if err != nil {
 	//	Logger.Warn(err.Error()) // proper error handling instead of panic in your app
 	//}

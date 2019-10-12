@@ -14,8 +14,8 @@ type DBMgr struct {
 }
 
 var (
-	blockSQL = "INSERT INTO block VALUES(?,?,?,?,?)"
-	txSQL    = "INSERT INTO transaction VALUES(?,?,?,?,?,?,?)"
+	blockSQL = "INSERT INTO block VALUES(?,?,?,?)"
+	txSQL    = "INSERT INTO transaction VALUES(?,?,?,?)"
 	dbInfo   = helpers.GetAppConf().Conf.DB
 )
 
