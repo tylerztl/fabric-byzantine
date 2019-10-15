@@ -3,6 +3,7 @@ package mysql
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fabric-byzantine/server/helpers"
 	"fmt"
 
@@ -87,27 +88,28 @@ func (m *DBMgr) QueryRows(query string, args ...interface{}) ([]byte, error) {
 	return json.Marshal(datas)
 }
 
-func (m *DBMgr) GetBlockHeight() uint64 {
-	rows, err := m.db.Query("select max(number) as height from block")
+func (m *DBMgr) QueryValue(query string, args ...interface{}) ([]byte, error) {
+	rows, err := m.db.Query(query, args...)
 	if err != nil {
-		panic(err.Error())
+		return nil, err
 	}
 	columns, err := rows.Columns()
 	if err != nil {
-		panic(err.Error())
+		return nil, err
 	}
 	if len(columns) != 1 {
-		panic("GetBlockHeight invalid height.")
+		return nil, errors.New("query invalid columns")
 	}
+
+	var col []byte
 	for rows.Next() {
-		var col uint64
 		err = rows.Scan(&col)
 		if err != nil {
-			return 0
+			return nil, err
 		}
-		return col
+		fmt.Println(columns[0], ":", string(col))
 	}
-	return 0
+	return col, nil
 }
 
 func CloseDB() {

@@ -99,6 +99,8 @@ func transaction(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	defer mysql.CloseDB()
+
 	go server.GetSdkProvider().BlockListener("mychannel1")
 	go timerTask()
 

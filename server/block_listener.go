@@ -104,7 +104,7 @@ func updateBlock(block *cb.Block) {
 }
 
 func syncBlock(ledgerClient *ledger.Client, targets fab.Peer) {
-	height := mysql.GetDBMgr().GetBlockHeight()
+	height := mysql.GetBlockHeight()
 	logger.Info("mysql block height: %d", height)
 
 	ledgerInfoBefore, err := ledgerClient.QueryInfo(ledger.WithTargets(targets), ledger.WithMinTargets(1), ledger.WithMaxTargets(10))
