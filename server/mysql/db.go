@@ -2,8 +2,11 @@ package mysql
 
 import (
 	"database/sql"
+	"encoding/json"
+	"errors"
 	"fabric-byzantine/server/helpers"
 	"fmt"
+
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -14,9 +17,10 @@ type DBMgr struct {
 }
 
 var (
-	blockSQL = "INSERT INTO block VALUES(?,?,?,?)"
-	txSQL    = "INSERT INTO transaction VALUES(?,?,?,?)"
-	dbInfo   = helpers.GetAppConf().Conf.DB
+	blockSQL  = "INSERT INTO block VALUES(?,?,?,?)"
+	txSQL     = "INSERT INTO transaction VALUES(?,?,?,?)"
+	blockPage = "select * from (select number from block order by number desc limit ?,?) a left join block b on a.number = b.number;"
+	dbInfo    = helpers.GetAppConf().Conf.DB
 )
 
 var dbMgr *DBMgr
@@ -68,6 +72,48 @@ func (m *DBMgr) GetBlockHeight() uint64 {
 		return col
 	}
 	return 0
+}
+
+func (m *DBMgr) BlockPage(pageId, size int) ([]byte, error) {
+	if pageId < 1 {
+		return nil, errors.New("invalid pageId")
+	}
+	rows, err := m.db.Query(blockPage, (pageId-1)*size, size)
+	if err != nil {
+		return nil, err
+	}
+	columns, err := rows.Columns()
+	if err != nil {
+		return nil, err
+	}
+	datas := make([]map[string]string, 0)
+	values := make([]sql.RawBytes, len(columns))
+	scanArgs := make([]interface{}, len(values))
+	for i := range values {
+		scanArgs[i] = &values[i]
+	}
+	for rows.Next() {
+		err = rows.Scan(scanArgs...)
+		if err != nil {
+			return nil, err
+		}
+		entry := make(map[string]string)
+		var value string
+		for i, col := range values {
+			if col == nil {
+				value = "NULL"
+			} else {
+				value = string(col)
+			}
+			entry[columns[i]] = value
+		}
+		datas = append(datas, entry)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return json.Marshal(datas)
 }
 
 func CloseDB() {

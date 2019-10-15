@@ -1,17 +1,7 @@
 package server
 
-import (
-	. "fabric-byzantine/server/helpers"
-)
-
-type SdkProvider interface {
-	InvokeCC(channelID, ccID, function string, args [][]byte) ([]byte, TransactionID, error)
-	QueryCC(channelID, ccID, function string, args [][]byte) ([]byte, error)
-	BlockListener(channelID string)
-}
-
 type Handler struct {
-	Provider SdkProvider
+	Provider *FabSdkProvider
 }
 
 var hanlder = NewHandler()
@@ -28,6 +18,6 @@ func NewHandler() *Handler {
 	return &Handler{}
 }
 
-func GetSdkProvider() SdkProvider {
+func GetSdkProvider() *FabSdkProvider {
 	return hanlder.Provider
 }

@@ -1,23 +1,13 @@
-//package main
-//
-//import (
-//	"fabric-byzantine/server"
-//	"fabric-byzantine/server/helpers"
-//	"net/http"
-//	"time"
-//
-//	"github.com/gin-gonic/gin"
-//)
-//
-
 package main
 
 import (
 	"fabric-byzantine/server"
+	"fabric-byzantine/server/mysql"
 	"flag"
 	"html/template"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -31,38 +21,46 @@ func timerTask() {
 	}
 }
 
-//func main() {
-//	go server.GetSdkProvider().BlockListener("mychannel1")
-//	go timerTask()
-//
-//	router := gin.Default()
-//	router.GET("/query", func(c *gin.Context) {
-//		data, err := server.GetSdkProvider().QueryCC("mychannel1", "token", "balance", [][]byte{[]byte("fab"), []byte("alice")})
-//		if err != nil {
-//			logger.Error("query err: %v", err)
-//			c.JSON(http.StatusOK, err)
-//		} else {
-//			c.JSON(http.StatusOK, data)
-//		}
-//	})
-//
-//	router.POST("/invoke", func(c *gin.Context) {
-//		message := c.PostForm("message")
-//
-//		c.JSON(200, gin.H{
-//			"status":  "posted",
-//			"message": message,
-//		})
-//	})
-//
-//	_ = router.Run(":8080")
-//}
-
 var addr = flag.String("addr", ":8080", "http service address")
 
 var upgrader = websocket.Upgrader{} // use default options
 
-func echo(w http.ResponseWriter, r *http.Request) {
+func block(w http.ResponseWriter, r *http.Request) {
+	c, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Print("upgrade:", err)
+		return
+	}
+	defer c.Close()
+	for {
+		mt, message, err := c.ReadMessage()
+		if err != nil {
+			log.Println("read:", err)
+			break
+		}
+		log.Printf("recv: %s", message)
+		err = c.WriteMessage(mt, message)
+		if err != nil {
+			log.Println("write:", err)
+			break
+		}
+	}
+}
+
+func blockPage(w http.ResponseWriter, r *http.Request) {
+	pageId, _ := strconv.Atoi(r.FormValue("id"))
+	size, _ := strconv.Atoi(r.FormValue("size"))
+	datas, err := mysql.GetDBMgr().BlockPage(pageId, size)
+	if err != nil {
+		w.WriteHeader(500)
+		w.Write([]byte(err.Error()))
+	} else {
+		w.WriteHeader(200)
+		w.Write(datas)
+	}
+}
+
+func transaction(w http.ResponseWriter, r *http.Request) {
 	c, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Print("upgrade:", err)
@@ -90,19 +88,21 @@ func main() {
 
 	flag.Parse()
 	log.SetFlags(0)
-	http.HandleFunc("/query", func(w http.ResponseWriter, r *http.Request) {
-		data, err := server.GetSdkProvider().QueryCC("mychannel1", "token", "balance", [][]byte{[]byte("fab"), []byte("alice")})
+	http.HandleFunc("/balance/", func(w http.ResponseWriter, r *http.Request) {
+		user := r.FormValue("user")
+		data, err := server.GetSdkProvider().QueryCC("mychannel1", "token",
+			"balance", [][]byte{[]byte("fab"), []byte(user)})
 		if err != nil {
-			log.Printf("query err: %v", err)
-			w.Write(nil)
+			w.WriteHeader(500)
+			w.Write([]byte(err.Error()))
 		} else {
+			w.WriteHeader(200)
 			w.Write(data)
 		}
 	})
-	http.HandleFunc("/invoke", func(w http.ResponseWriter, r *http.Request) {
-
-	})
-	http.HandleFunc("/echo", echo)
+	http.HandleFunc("/block/page", blockPage)
+	http.HandleFunc("/block", block)
+	http.HandleFunc("/transaction", transaction)
 	http.HandleFunc("/", home)
 	log.Fatal(http.ListenAndServe(*addr, nil))
 }
