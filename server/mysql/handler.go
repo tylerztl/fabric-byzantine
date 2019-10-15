@@ -19,10 +19,6 @@ func GetBlockHeight() uint64 {
 		panic(err.Error())
 		return 0
 	}
-	height, err := strconv.ParseUint(string(data), 10, 64)
-	if err != nil {
-		panic(err.Error())
-		return 0
-	}
+	height, _ := strconv.ParseUint(string(data), 10, 64)
 	return height
 }

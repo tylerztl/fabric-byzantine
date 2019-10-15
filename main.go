@@ -111,6 +111,28 @@ func transaction(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func echo(w http.ResponseWriter, r *http.Request) {
+	c, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Print("upgrade:", err)
+		return
+	}
+	defer c.Close()
+	for {
+		mt, message, err := c.ReadMessage()
+		if err != nil {
+			log.Println("read:", err)
+			break
+		}
+		log.Printf("recv: %s", message)
+		err = c.WriteMessage(mt, message)
+		if err != nil {
+			log.Println("write:", err)
+			break
+		}
+	}
+}
+
 func main() {
 	defer mysql.CloseDB()
 
@@ -124,6 +146,7 @@ func main() {
 	http.HandleFunc("/block", block)
 	http.HandleFunc("/transaction", transaction)
 	http.HandleFunc("/", home)
+	http.HandleFunc("/echo", echo)
 	log.Fatal(http.ListenAndServe(*addr, nil))
 }
 
