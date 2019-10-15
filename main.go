@@ -26,6 +26,19 @@ var addr = flag.String("addr", ":8080", "http service address")
 
 var upgrader = websocket.Upgrader{} // use default options
 
+func getBalance(w http.ResponseWriter, r *http.Request) {
+	user := r.FormValue("user")
+	data, err := server.GetSdkProvider().QueryCC("mychannel1", "token",
+		"balance", [][]byte{[]byte("fab"), []byte(user)})
+	if err != nil {
+		w.WriteHeader(500)
+		w.Write([]byte(err.Error()))
+	} else {
+		w.WriteHeader(200)
+		w.Write(data)
+	}
+}
+
 func block(w http.ResponseWriter, r *http.Request) {
 	c, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -106,18 +119,7 @@ func main() {
 
 	flag.Parse()
 	log.SetFlags(0)
-	http.HandleFunc("/balance/", func(w http.ResponseWriter, r *http.Request) {
-		user := r.FormValue("user")
-		data, err := server.GetSdkProvider().QueryCC("mychannel1", "token",
-			"balance", [][]byte{[]byte("fab"), []byte(user)})
-		if err != nil {
-			w.WriteHeader(500)
-			w.Write([]byte(err.Error()))
-		} else {
-			w.WriteHeader(200)
-			w.Write(data)
-		}
-	})
+	http.HandleFunc("/balance", getBalance)
 	http.HandleFunc("/block/page", blockPage)
 	http.HandleFunc("/block", block)
 	http.HandleFunc("/transaction", transaction)
