@@ -3,7 +3,6 @@ package mysql
 import (
 	"database/sql"
 	"encoding/json"
-	"errors"
 	"fabric-byzantine/server/helpers"
 	"fmt"
 
@@ -16,22 +15,16 @@ type DBMgr struct {
 	stmtBlock *sql.Stmt
 }
 
-var (
-	blockSQL  = "INSERT INTO block VALUES(?,?,?,?)"
-	txSQL     = "INSERT INTO transaction VALUES(?,?,?,?)"
-	blockPage = "select * from (select number from block order by number desc limit ?,?) a left join block b on a.number = b.number;"
-	dbInfo    = helpers.GetAppConf().Conf.DB
-)
+var dbConf = helpers.GetAppConf().Conf.DB
+var dbMgr = NewDBMgr()
 
-var dbMgr *DBMgr
-
-func init() {
-	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", dbInfo.User, dbInfo.Password, dbInfo.Host, dbInfo.Port, dbInfo.Name))
+func NewDBMgr() *DBMgr {
+	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", dbConf.User, dbConf.Password, dbConf.Host, dbConf.Port, dbConf.Name))
 	if err != nil {
 		panic(err.Error()) // Just for example purpose. You should use proper error handling instead of panic
 	}
-	db.SetMaxOpenConns(dbInfo.MaxOpenConns)
-	db.SetMaxIdleConns(dbInfo.MaxIdleConns)
+	db.SetMaxOpenConns(dbConf.MaxOpenConns)
+	db.SetMaxIdleConns(dbConf.MaxIdleConns)
 	// Open doesn't open a connection. Validate DSN data:
 	err = db.Ping()
 	if err != nil {
@@ -48,37 +41,15 @@ func init() {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
 
-	dbMgr = &DBMgr{db, stmtTx, stmtBlock}
+	return &DBMgr{db, stmtTx, stmtBlock}
 }
 
-func (m *DBMgr) GetBlockHeight() uint64 {
-	rows, err := m.db.Query("select max(number) as height from block")
-	if err != nil {
-		panic(err.Error())
-	}
-	columns, err := rows.Columns()
-	if err != nil {
-		panic(err.Error())
-	}
-	if len(columns) != 1 {
-		panic("GetBlockHeight invalid height.")
-	}
-	for rows.Next() {
-		var col uint64
-		err = rows.Scan(&col)
-		if err != nil {
-			return 0
-		}
-		return col
-	}
-	return 0
+func GetDBMgr() *DBMgr {
+	return dbMgr
 }
 
-func (m *DBMgr) BlockPage(pageId, size int) ([]byte, error) {
-	if pageId < 1 {
-		return nil, errors.New("invalid pageId")
-	}
-	rows, err := m.db.Query(blockPage, (pageId-1)*size, size)
+func (m *DBMgr) QueryRows(query string, args ...interface{}) ([]byte, error) {
+	rows, err := m.db.Query(query, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -116,6 +87,29 @@ func (m *DBMgr) BlockPage(pageId, size int) ([]byte, error) {
 	return json.Marshal(datas)
 }
 
+func (m *DBMgr) GetBlockHeight() uint64 {
+	rows, err := m.db.Query("select max(number) as height from block")
+	if err != nil {
+		panic(err.Error())
+	}
+	columns, err := rows.Columns()
+	if err != nil {
+		panic(err.Error())
+	}
+	if len(columns) != 1 {
+		panic("GetBlockHeight invalid height.")
+	}
+	for rows.Next() {
+		var col uint64
+		err = rows.Scan(&col)
+		if err != nil {
+			return 0
+		}
+		return col
+	}
+	return 0
+}
+
 func CloseDB() {
 	if err := dbMgr.db.Close(); err != nil {
 		panic(err)
@@ -126,10 +120,6 @@ func CloseDB() {
 	if err := dbMgr.stmtBlock.Close(); err != nil {
 		panic(err)
 	}
-}
-
-func GetDBMgr() *DBMgr {
-	return dbMgr
 }
 
 func GetDB() *sql.DB {

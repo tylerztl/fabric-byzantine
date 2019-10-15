@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fabric-byzantine/server"
 	"fabric-byzantine/server/mysql"
 	"flag"
@@ -48,16 +49,31 @@ func block(w http.ResponseWriter, r *http.Request) {
 }
 
 func blockPage(w http.ResponseWriter, r *http.Request) {
-	pageId, _ := strconv.Atoi(r.FormValue("id"))
-	size, _ := strconv.Atoi(r.FormValue("size"))
-	datas, err := mysql.GetDBMgr().BlockPage(pageId, size)
+	var err error
+	var datas []byte
+	defer func() {
+		if err != nil {
+			w.WriteHeader(500)
+			w.Write([]byte(err.Error()))
+		} else {
+			w.WriteHeader(200)
+			w.Write(datas)
+		}
+	}()
+	var pageId, size int
+	pageId, err = strconv.Atoi(r.FormValue("id"))
 	if err != nil {
-		w.WriteHeader(500)
-		w.Write([]byte(err.Error()))
-	} else {
-		w.WriteHeader(200)
-		w.Write(datas)
+		return
 	}
+	size, err = strconv.Atoi(r.FormValue("size"))
+	if err != nil {
+		return
+	}
+	if pageId < 1 || size < 1 {
+		err = errors.New("invalid pageId")
+		return
+	}
+	datas, err = mysql.BlockPage(pageId, size)
 }
 
 func transaction(w http.ResponseWriter, r *http.Request) {
