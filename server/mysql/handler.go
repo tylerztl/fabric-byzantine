@@ -10,11 +10,11 @@ var (
 )
 
 func BlockPage(pageId, size int) ([]byte, error) {
-	return dbMgr.QueryRows(blockPage, (pageId-1)*size, size)
+	return GetDBMgr().QueryRows(blockPage, (pageId-1)*size, size)
 }
 
 func GetBlockHeight() uint64 {
-	data, err := dbMgr.QueryValue(blockHeight)
+	data, err := GetDBMgr().QueryValue(blockHeight)
 	if err != nil {
 		panic(err.Error())
 		return 0

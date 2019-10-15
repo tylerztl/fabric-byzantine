@@ -49,6 +49,30 @@ func GetDBMgr() *DBMgr {
 	return dbMgr
 }
 
+func GetDB() *sql.DB {
+	return dbMgr.db
+}
+
+func GetStmtTx() *sql.Stmt {
+	return dbMgr.stmtTx
+}
+
+func GetStmtBlock() *sql.Stmt {
+	return dbMgr.stmtBlock
+}
+
+func CloseDB() {
+	if err := dbMgr.db.Close(); err != nil {
+		panic(err)
+	}
+	if err := dbMgr.stmtTx.Close(); err != nil {
+		panic(err)
+	}
+	if err := dbMgr.stmtBlock.Close(); err != nil {
+		panic(err)
+	}
+}
+
 func (m *DBMgr) QueryRows(query string, args ...interface{}) ([]byte, error) {
 	rows, err := m.db.Query(query, args...)
 	if err != nil {
@@ -110,28 +134,4 @@ func (m *DBMgr) QueryValue(query string, args ...interface{}) ([]byte, error) {
 		fmt.Println(columns[0], ":", string(col))
 	}
 	return col, nil
-}
-
-func CloseDB() {
-	if err := dbMgr.db.Close(); err != nil {
-		panic(err)
-	}
-	if err := dbMgr.stmtTx.Close(); err != nil {
-		panic(err)
-	}
-	if err := dbMgr.stmtBlock.Close(); err != nil {
-		panic(err)
-	}
-}
-
-func GetDB() *sql.DB {
-	return dbMgr.db
-}
-
-func GetStmtTx() *sql.Stmt {
-	return dbMgr.stmtTx
-}
-
-func GetStmtBlock() *sql.Stmt {
-	return dbMgr.stmtBlock
 }
