@@ -20,7 +20,8 @@ func timerTask() {
 	c := time.Tick(5 * time.Second)
 	for {
 		<-c
-		go server.GetSdkProvider().InvokeCC("mychannel1", "token", "transfer", [][]byte{[]byte("fab"), []byte("alice"), []byte("bob"), []byte("1"), []byte("true")})
+		go server.GetSdkProvider().InvokeCC("mychannel1", "token", "transfer",
+			[][]byte{[]byte("fab"), []byte("alice"), []byte("bob"), []byte("1"), []byte("true")})
 	}
 }
 
@@ -63,10 +64,10 @@ func block(w http.ResponseWriter, r *http.Request) {
 		//log.Printf("msg type: %d, recv: %s", mt, message)
 		select {
 		case datas := <-ch:
-			log.Println("response:", string(datas))
+			log.Println("block ws response:", string(datas))
 			err = c.WriteMessage(websocket.TextMessage, datas)
 			if err != nil {
-				log.Println("response err:", err)
+				log.Println("block ws response err:", err)
 				server.BlockChans.Delete(uid)
 				return
 			}
@@ -109,19 +110,52 @@ func transaction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer c.Close()
+
+	uid := uuid.NewV4().String()
+	fmt.Println(uid)
+	ch := make(chan []byte)
+	server.TxChans.Store(uid, ch)
+
 	for {
-		mt, message, err := c.ReadMessage()
-		if err != nil {
-			log.Println("read:", err)
-			break
-		}
-		log.Printf("recv: %s", message)
-		err = c.WriteMessage(mt, message)
-		if err != nil {
-			log.Println("write:", err)
-			break
+		select {
+		case datas := <-ch:
+			log.Println("transaction ws response:", string(datas))
+			err = c.WriteMessage(websocket.TextMessage, datas)
+			if err != nil {
+				log.Println("transaction ws response err:", err)
+				server.TxChans.Delete(uid)
+				return
+			}
 		}
 	}
+}
+
+func transactionPage(w http.ResponseWriter, r *http.Request) {
+	var err error
+	var datas []byte
+	defer func() {
+		if err != nil {
+			w.WriteHeader(500)
+			w.Write([]byte(err.Error()))
+		} else {
+			w.WriteHeader(200)
+			w.Write(datas)
+		}
+	}()
+	var pageId, size int
+	pageId, err = strconv.Atoi(r.FormValue("id"))
+	if err != nil {
+		return
+	}
+	size, err = strconv.Atoi(r.FormValue("size"))
+	if err != nil {
+		return
+	}
+	if pageId < 1 || size < 1 {
+		err = errors.New("invalid pageId")
+		return
+	}
+	datas, err = mysql.TransactionPage(pageId, size)
 }
 
 func main() {
@@ -136,6 +170,7 @@ func main() {
 	http.HandleFunc("/block/page", blockPage)
 	http.HandleFunc("/block", block)
 	http.HandleFunc("/transaction", transaction)
+	http.HandleFunc("/transaction/page", transactionPage)
 	http.HandleFunc("/", home)
 	http.HandleFunc("/echo", echo)
 	log.Fatal(http.ListenAndServe(*addr, nil))

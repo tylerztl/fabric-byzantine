@@ -17,12 +17,19 @@ import (
 )
 
 var BlockChans = new(sync.Map)
+var TxChans = new(sync.Map)
 
 type BlockInfo struct {
 	Number    uint64    `json:"number"`
 	TxCount   int       `json:"tx_count"`
 	BlockHash string    `json:"block_hash"`
 	DateTime  time.Time `json:"datetime"`
+}
+
+type TransactionInfo struct {
+	Status   int       `json:"status"`
+	TxId     string    `json:"tx_id"`
+	DateTime time.Time `json:"datetime"`
 }
 
 func registerBlockEvent(eventClient *event.Client) {
@@ -96,21 +103,22 @@ func updateBlock(block *cb.Block, notify bool) {
 		//_, err = stmTx.Exec(block.Header.Number*uint64(AppConf.TxNumPerBlock)+uint64(i), channelHeader.TxId, validationCode, txTime)
 		//if err != nil {
 		//	Logger.Warn(err.Error()) // proper error handling instead of panic in your app
-		//}
+		//}'
+
+		TxChans.Range(func(key, value interface{}) bool {
+			datas, _ := json.Marshal(&TransactionInfo{
+				Status:   validationCode,
+				TxId:     channelHeader.TxId,
+				DateTime: txTime,
+			})
+			value.(chan []byte) <- datas
+			return true
+		})
 	}
 
 	_, err = begin.Stmt(mysql.GetStmtBlock()).Exec(block.Header.Number, hex.EncodeToString(block.Header.DataHash), txLen, txTime)
 	if err != nil {
 		logger.Warn(err.Error()) // proper error handling instead of panic in your app
-	}
-
-	//_, err = stmtIns.Exec(block.Header.Number, hex.EncodeToString(block.Header.DataHash), txLen, txTime)
-	//if err != nil {
-	//	Logger.Warn(err.Error()) // proper error handling instead of panic in your app
-	//}
-	err = begin.Commit()
-	if err != nil {
-		logger.Warn(err.Error())
 	}
 
 	BlockChans.Range(func(key, value interface{}) bool {
@@ -123,6 +131,15 @@ func updateBlock(block *cb.Block, notify bool) {
 		value.(chan []byte) <- datas
 		return true
 	})
+
+	//_, err = stmtIns.Exec(block.Header.Number, hex.EncodeToString(block.Header.DataHash), txLen, txTime)
+	//if err != nil {
+	//	Logger.Warn(err.Error()) // proper error handling instead of panic in your app
+	//}
+	err = begin.Commit()
+	if err != nil {
+		logger.Warn(err.Error())
+	}
 }
 
 func syncBlock(ledgerClient *ledger.Client, targets fab.Peer) {
