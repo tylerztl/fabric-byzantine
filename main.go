@@ -5,6 +5,7 @@ import (
 	"fabric-byzantine/server"
 	"fabric-byzantine/server/mysql"
 	"flag"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -12,6 +13,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/satori/go.uuid"
 )
 
 func timerTask() {
@@ -46,17 +48,28 @@ func block(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer c.Close()
+
+	uid := uuid.NewV4().String()
+	fmt.Println(uid)
+	ch := make(chan []byte)
+	server.BlockChans.Store(uid, ch)
+
 	for {
-		mt, message, err := c.ReadMessage()
-		if err != nil {
-			log.Println("read:", err)
-			break
-		}
-		log.Printf("recv: %s", message)
-		err = c.WriteMessage(mt, message)
-		if err != nil {
-			log.Println("write:", err)
-			break
+		//mt, message, err := c.ReadMessage()
+		//if err != nil {
+		//	log.Println("read:", err)
+		//	return
+		//}
+		//log.Printf("msg type: %d, recv: %s", mt, message)
+		select {
+		case datas := <-ch:
+			log.Println("response:", string(datas))
+			err = c.WriteMessage(websocket.TextMessage, datas)
+			if err != nil {
+				log.Println("response err:", err)
+				server.BlockChans.Delete(uid)
+				return
+			}
 		}
 	}
 }
@@ -111,28 +124,6 @@ func transaction(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func echo(w http.ResponseWriter, r *http.Request) {
-	c, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Print("upgrade:", err)
-		return
-	}
-	defer c.Close()
-	for {
-		mt, message, err := c.ReadMessage()
-		if err != nil {
-			log.Println("read:", err)
-			break
-		}
-		log.Printf("recv: %s", message)
-		err = c.WriteMessage(mt, message)
-		if err != nil {
-			log.Println("write:", err)
-			break
-		}
-	}
-}
-
 func main() {
 	defer mysql.CloseDB()
 
@@ -152,6 +143,28 @@ func main() {
 
 func home(w http.ResponseWriter, r *http.Request) {
 	homeTemplate.Execute(w, "ws://"+r.Host+"/echo")
+}
+
+func echo(w http.ResponseWriter, r *http.Request) {
+	c, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Print("upgrade:", err)
+		return
+	}
+	defer c.Close()
+	for {
+		mt, message, err := c.ReadMessage()
+		if err != nil {
+			log.Println("read:", err)
+			break
+		}
+		log.Printf("msg type: %d, recv: %s", mt, message)
+		err = c.WriteMessage(mt, message)
+		if err != nil {
+			log.Println("write:", err)
+			break
+		}
+	}
 }
 
 var homeTemplate = template.Must(template.New("").Parse(`

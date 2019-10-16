@@ -12,6 +12,7 @@ require (
 	github.com/hyperledger/fabric-protos-go v0.0.0-20190919234611-2a87503ac7c9
 	github.com/hyperledger/fabric-sdk-go v1.0.0-beta1
 	github.com/pkg/errors v0.8.1
+	github.com/satori/go.uuid v1.2.0 // indirect
 	github.com/shiena/ansicolor v0.0.0-20151119151921-a422bbe96644 // indirect
 	gopkg.in/yaml.v2 v2.2.4
 )

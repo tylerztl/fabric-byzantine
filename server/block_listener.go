@@ -2,10 +2,12 @@ package server
 
 import (
 	"encoding/hex"
+	"encoding/json"
 	"fabric-byzantine/server/mysql"
 	"fabric-byzantine/server/protoutil"
 	"fmt"
 	"strconv"
+	"sync"
 	"time"
 
 	cb "github.com/hyperledger/fabric-protos-go/common"
@@ -13,6 +15,15 @@ import (
 	"github.com/hyperledger/fabric-sdk-go/pkg/client/ledger"
 	"github.com/hyperledger/fabric-sdk-go/pkg/common/providers/fab"
 )
+
+var BlockChans = new(sync.Map)
+
+type BlockInfo struct {
+	Number    uint64    `json:"number"`
+	TxCount   int       `json:"tx_count"`
+	BlockHash string    `json:"block_hash"`
+	DateTime  time.Time `json:"datetime"`
+}
 
 func registerBlockEvent(eventClient *event.Client) {
 	reg, eventch, err := eventClient.RegisterBlockEvent()
@@ -35,13 +46,13 @@ func registerBlockEvent(eventClient *event.Client) {
 			if flag {
 				flag = false
 			} else {
-				go updateBlock(e.Block)
+				go updateBlock(e.Block, true)
 			}
 		}
 	}
 }
 
-func updateBlock(block *cb.Block) {
+func updateBlock(block *cb.Block, notify bool) {
 	if block.Header.Number == 0 {
 		return
 	}
@@ -101,6 +112,17 @@ func updateBlock(block *cb.Block) {
 	if err != nil {
 		logger.Warn(err.Error())
 	}
+
+	BlockChans.Range(func(key, value interface{}) bool {
+		datas, _ := json.Marshal(&BlockInfo{
+			Number:    block.Header.Number,
+			TxCount:   txLen,
+			BlockHash: hex.EncodeToString(block.Header.DataHash),
+			DateTime:  txTime,
+		})
+		value.(chan []byte) <- datas
+		return true
+	})
 }
 
 func syncBlock(ledgerClient *ledger.Client, targets fab.Peer) {
@@ -121,7 +143,7 @@ func syncBlock(ledgerClient *ledger.Client, targets fab.Peer) {
 			if err != nil {
 				panic(err.Error())
 			}
-			go updateBlock(block)
+			go updateBlock(block, false)
 		}
 	}
 }
