@@ -26,7 +26,6 @@ func timerTask() {
 		peers := make(map[string]bool)
 		json.Unmarshal(result, &peers)
 
-		index := 0
 		peer := ""
 		peerType := 0 // normal peer
 		for k, v := range peers {
@@ -34,13 +33,14 @@ func timerTask() {
 				peer = k
 				break
 			}
-			index++
 		}
-		if index >= 10 {
+		index := 0
+		if peer == "" {
 			peerType = 1 // byzantine peer
-			index = 0
+			peer = "peer0.org1.example.com"
 		}
-		go server.GetSdkProvider().InvokeCC(peer, peerType, index, "mychannel1", "token", "transfer",
+		index, _ = strconv.Atoi(peer[9:10])
+		go server.GetSdkProvider().InvokeCC(peer, peerType, index-1, "mychannel1", "token", "transfer",
 			[][]byte{[]byte("fab"), []byte("alice"), []byte("bob"), []byte("1"), []byte("true")})
 	}
 }
