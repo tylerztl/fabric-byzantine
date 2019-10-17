@@ -95,7 +95,7 @@ func updateBlock(block *cb.Block, notify bool) {
 		validationCode, _ := strconv.Atoi(string(metadata.Value))
 
 		logger.Debug("Seek block number:%d", block.Header.Number)
-		_, err = begin.Stmt(mysql.GetStmtTx()).Exec(block.Header.Number*uint64(appConf.TxNumPerBlock)+uint64(i), channelHeader.TxId, validationCode, txTime)
+		_, err = begin.Stmt(mysql.GetStmtTx()).Exec(block.Header.Number*uint64(appConf.TxNumPerBlock)+uint64(i), channelHeader.TxId, "peer0.org1.example.com", 0, validationCode, txTime)
 		if err != nil {
 			logger.Warn(err.Error()) // proper error handling instead of panic in your app
 		}

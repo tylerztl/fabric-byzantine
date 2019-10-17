@@ -168,6 +168,38 @@ func (s *TokenContract) setPeer(stub shim.ChaincodeStubInterface, args []string)
 	return shim.Success(tokenAsBytes)
 }
 
+func (s *TokenContract) getPeers(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	if len(args) != 1 {
+		return shim.Error("Incorrect number of arguments. Expecting 1")
+	}
+
+	tokenAsBytes, err := stub.GetState(args[0])
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	token := Token{
+		Owner:       "",
+		TotalSupply: 0,
+		TokenName:   "",
+		BalanceOf:   make(map[string]int),
+		Peers:       make(map[string]bool),
+		Flag:        false,
+	}
+
+	err = json.Unmarshal(tokenAsBytes, &token)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	peers, err := json.Marshal(token.Peers)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	return shim.Success(peers)
+}
+
 func (s *TokenContract) balance(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	if len(args) != 2 {
@@ -206,6 +238,8 @@ func (s *TokenContract) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return s.balance(stub, args)
 	} else if function == "setPeer" {
 		return s.setPeer(stub, args)
+	} else if function == "getPeers" {
+		return s.getPeers(stub, args)
 	}
 
 	return shim.Error(fmt.Sprintf("Invalid Token Contract function name:%s", function))

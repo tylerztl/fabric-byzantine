@@ -7,6 +7,8 @@ USE `explore`;
 CREATE TABLE IF NOT EXISTS `transaction` (
 `tx_index` BIGINT UNSIGNED  NOT NULL   COMMENT '',
 `tx_id` VARCHAR(64)  NOT NULL   COMMENT '',
+`peer` VARCHAR(64)  NOT NULL   COMMENT '',
+`tx_type` INT  NOT NULL   COMMENT '',
 `status` INT  NOT NULL   COMMENT '',
 `datetime` TIMESTAMP  NOT NULL   COMMENT '',
 PRIMARY KEY (`tx_index`)

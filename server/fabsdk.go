@@ -122,9 +122,9 @@ func NewFabSdkProvider() (*FabSdkProvider, error) {
 	return provider, nil
 }
 
-func (f *FabSdkProvider) InvokeCC(channelID, ccID, function string, args [][]byte) ([]byte, helpers.TransactionID, error) {
+func (f *FabSdkProvider) InvokeCC(index int, channelID, ccID, function string, args [][]byte) ([]byte, helpers.TransactionID, error) {
 	//ledger.WithTargets(orgTestPeer0, orgTestPeer1)
-	orgInstance := f.Orgs[0]
+	orgInstance := f.Orgs[index]
 	//prepare context
 	userContext := f.Sdk.ChannelContext(channelID, fabsdk.WithUser(orgInstance.Config.User), fabsdk.WithOrg(orgInstance.Config.Name))
 	//get channel client
@@ -169,8 +169,8 @@ func (f *FabSdkProvider) QueryCC(channelID, ccID, function string, args [][]byte
 		return nil, err
 	}
 
-	logger.Debug("Successfully query chaincode  ccName[%s] func[%v] payload[%v]",
-		ccID, function, response.Payload)
+	logger.Debug("Successfully query chaincode  ccName[%s] func[%v] payload[%s]",
+		ccID, function, string(response.Payload))
 	return response.Payload, nil
 }
 

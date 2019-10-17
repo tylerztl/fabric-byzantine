@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fabric-byzantine/server"
 	"fabric-byzantine/server/mysql"
@@ -20,7 +21,21 @@ func timerTask() {
 	c := time.Tick(5 * time.Second)
 	for {
 		<-c
-		go server.GetSdkProvider().InvokeCC("mychannel1", "token", "transfer",
+		result, _ := server.GetSdkProvider().QueryCC("mychannel1", "token",
+			"getPeers", [][]byte{[]byte("fab")})
+		peers := make(map[string]bool)
+		json.Unmarshal(result, &peers)
+		index := 0
+		for _, v := range peers {
+			if v {
+				break
+			}
+			index++
+		}
+		if index >= 10 {
+			index = 0
+		}
+		go server.GetSdkProvider().InvokeCC(index, "mychannel1", "token", "transfer",
 			[][]byte{[]byte("fab"), []byte("alice"), []byte("bob"), []byte("1"), []byte("true")})
 	}
 }
