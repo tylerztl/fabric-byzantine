@@ -3,8 +3,8 @@ package server
 import (
 	"errors"
 	"fabric-byzantine/server/helpers"
+	"fabric-byzantine/server/mysql"
 	"fmt"
-
 	"github.com/hyperledger/fabric-sdk-go/pkg/client/channel"
 	"github.com/hyperledger/fabric-sdk-go/pkg/client/event"
 	"github.com/hyperledger/fabric-sdk-go/pkg/client/ledger"
@@ -16,6 +16,8 @@ import (
 	"github.com/hyperledger/fabric-sdk-go/pkg/core/config"
 	"github.com/hyperledger/fabric-sdk-go/pkg/fab/events/deliverclient/seek"
 	"github.com/hyperledger/fabric-sdk-go/pkg/fabsdk"
+	"strconv"
+	"time"
 )
 
 var logger = helpers.GetLogger()
@@ -122,7 +124,7 @@ func NewFabSdkProvider() (*FabSdkProvider, error) {
 	return provider, nil
 }
 
-func (f *FabSdkProvider) InvokeCC(index int, channelID, ccID, function string, args [][]byte) ([]byte, helpers.TransactionID, error) {
+func (f *FabSdkProvider) InvokeCC(peer string, peerType int, index int, channelID, ccID, function string, args [][]byte) ([]byte, helpers.TransactionID, error) {
 	//ledger.WithTargets(orgTestPeer0, orgTestPeer1)
 	orgInstance := f.Orgs[index]
 	//prepare context
@@ -145,6 +147,28 @@ func (f *FabSdkProvider) InvokeCC(index int, channelID, ccID, function string, a
 		logger.Error("Failed InvokeCC: %s", err)
 		return nil, "", err
 	}
+
+	bFlage := false
+	timeout := 0
+	for {
+		if bFlage || timeout > 10 {
+			break
+		}
+		select {
+		case <-time.After(time.Millisecond * time.Duration(500)):
+			val, _ := mysql.QueryTransaction(string(response.TransactionID))
+			count, _ := strconv.Atoi(string(val))
+			bFlage = count == 1
+			timeout++
+		}
+	}
+
+	if bFlage {
+		if err := mysql.UpdateTransaction(peer, string(response.TransactionID), peerType); err != nil {
+			logger.Error("UpdateTransaction err:%s", err.Error())
+		}
+	}
+
 	logger.Debug("Successfully invoke chaincode  ccName[%s] func[%v] txId[%v]",
 		ccID, function, response.TransactionID)
 	return response.Payload, helpers.TransactionID(response.TransactionID), nil

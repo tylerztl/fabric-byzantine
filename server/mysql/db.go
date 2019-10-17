@@ -135,3 +135,14 @@ func (m *DBMgr) QueryValue(query string, args ...interface{}) ([]byte, error) {
 	}
 	return col, nil
 }
+
+func (m *DBMgr) InsertOrUpdate(query string, args ...interface{}) error {
+	stmtIns, err := m.db.Prepare(query)
+	if err != nil {
+		return err
+	}
+	defer stmtIns.Close()
+
+	_, err = stmtIns.Exec(args...)
+	return err
+}

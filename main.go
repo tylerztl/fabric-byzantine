@@ -25,17 +25,22 @@ func timerTask() {
 			"getPeers", [][]byte{[]byte("fab")})
 		peers := make(map[string]bool)
 		json.Unmarshal(result, &peers)
+
 		index := 0
-		for _, v := range peers {
+		peer := ""
+		peerType := 0 // normal peer
+		for k, v := range peers {
 			if v {
+				peer = k
 				break
 			}
 			index++
 		}
 		if index >= 10 {
+			peerType = 1 // byzantine peer
 			index = 0
 		}
-		go server.GetSdkProvider().InvokeCC(index, "mychannel1", "token", "transfer",
+		go server.GetSdkProvider().InvokeCC(peer, peerType, index, "mychannel1", "token", "transfer",
 			[][]byte{[]byte("fab"), []byte("alice"), []byte("bob"), []byte("1"), []byte("true")})
 	}
 }
