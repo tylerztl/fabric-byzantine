@@ -41,7 +41,7 @@ func timerTask() {
 		}
 		index, _ = strconv.Atoi(peer[9:10])
 		go server.GetSdkProvider().InvokeCC(peer, peerType, index-1, "mychannel1", "token", "transfer",
-			[][]byte{[]byte("fab"), []byte("alice"), []byte("bob"), []byte("1"), []byte("true")})
+			[][]byte{[]byte("fab"), []byte("alice"), []byte("bob"), []byte("1"), []byte("false")})
 	}
 }
 
@@ -49,10 +49,25 @@ var addr = flag.String("addr", ":8080", "http service address")
 
 var upgrader = websocket.Upgrader{} // use default options
 
-func getBalance(w http.ResponseWriter, r *http.Request) {
+func query(w http.ResponseWriter, r *http.Request) {
 	user := r.FormValue("user")
 	data, err := server.GetSdkProvider().QueryCC("mychannel1", "token",
 		"balance", [][]byte{[]byte("fab"), []byte(user)})
+	if err != nil {
+		w.WriteHeader(500)
+		w.Write([]byte(err.Error()))
+	} else {
+		w.WriteHeader(200)
+		w.Write(data)
+	}
+}
+
+func invoke(w http.ResponseWriter, r *http.Request) {
+	peer := r.FormValue("peer")
+	index, _ := strconv.Atoi(peer[9:10])
+	data, txId, err := server.GetSdkProvider().InvokeCC(peer, 1, index-1, "mychannel1", "token", "transfer",
+		[][]byte{[]byte("fab"), []byte("alice"), []byte("bob"), []byte("1"), []byte("true")})
+	fmt.Println("TxId:", txId)
 	if err != nil {
 		w.WriteHeader(500)
 		w.Write([]byte(err.Error()))
@@ -186,9 +201,10 @@ func main() {
 
 	flag.Parse()
 	log.SetFlags(0)
-	http.HandleFunc("/balance", getBalance)
+	http.HandleFunc("/query", query)
 	http.HandleFunc("/block/page", blockPage)
 	http.HandleFunc("/block", block)
+	http.HandleFunc("/invoke", invoke)
 	http.HandleFunc("/transaction", transaction)
 	http.HandleFunc("/transaction/page", transactionPage)
 	http.HandleFunc("/", home)
