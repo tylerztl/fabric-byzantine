@@ -51,6 +51,7 @@ var upgrader = websocket.Upgrader{} // use default options
 
 func query(w http.ResponseWriter, r *http.Request) {
 	user := r.FormValue("user")
+	peer := r.FormValue("peer")
 	data, err := server.GetSdkProvider().QueryCC("mychannel1", "token",
 		"balance", [][]byte{[]byte("fab"), []byte(user)})
 	if err != nil {
