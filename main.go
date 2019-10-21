@@ -77,6 +77,21 @@ func invoke(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func muma(w http.ResponseWriter, r *http.Request) {
+	peer := r.FormValue("peer")
+	index, _ := strconv.Atoi(peer[9:10])
+	data, txId, err := server.GetSdkProvider().InvokeCC(peer, 1, index-1, "mychannel1", "token", "setPeer",
+		[][]byte{[]byte("fab"), []byte(peer), []byte("false")})
+	fmt.Println("TxId:", txId)
+	if err != nil {
+		w.WriteHeader(500)
+		w.Write([]byte(err.Error()))
+	} else {
+		w.WriteHeader(200)
+		w.Write(data)
+	}
+}
+
 func block(w http.ResponseWriter, r *http.Request) {
 	c, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -207,6 +222,7 @@ func main() {
 	http.HandleFunc("/invoke", invoke)
 	http.HandleFunc("/transaction", transaction)
 	http.HandleFunc("/transaction/page", transactionPage)
+	http.HandleFunc("/muma", muma)
 	http.HandleFunc("/", home)
 	http.HandleFunc("/echo", echo)
 	log.Fatal(http.ListenAndServe(*addr, nil))
