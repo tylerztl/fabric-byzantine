@@ -144,7 +144,7 @@ func (f *FabSdkProvider) InvokeCC(peer string, peerType int, index int, channelI
 		},
 		channel.WithRetry(retry.DefaultChannelOpts))
 	if err != nil {
-		logger.Error("Failed InvokeCC: %s", err)
+		logger.Error("[%s] failed invokeCC: %s", peer, err)
 		return nil, "", err
 	}
 
@@ -174,8 +174,8 @@ func (f *FabSdkProvider) InvokeCC(peer string, peerType int, index int, channelI
 	return response.Payload, helpers.TransactionID(response.TransactionID), nil
 }
 
-func (f *FabSdkProvider) QueryCC(channelID, ccID, function string, args [][]byte) ([]byte, error) {
-	orgInstance := f.Orgs[0]
+func (f *FabSdkProvider) QueryCC(index int, channelID, ccID, function string, args [][]byte) ([]byte, error) {
+	orgInstance := f.Orgs[index]
 
 	//prepare context
 	userContext := f.Sdk.ChannelContext(channelID, fabsdk.WithUser(orgInstance.Config.User), fabsdk.WithOrg(orgInstance.Config.Name))

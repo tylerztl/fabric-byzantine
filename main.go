@@ -21,7 +21,7 @@ func timerTask() {
 	c := time.Tick(5 * time.Second)
 	for {
 		<-c
-		result, _ := server.GetSdkProvider().QueryCC("mychannel1", "token",
+		result, _ := server.GetSdkProvider().QueryCC(0, "mychannel1", "token",
 			"getPeers", [][]byte{[]byte("fab")})
 		peers := make(map[string]bool)
 		json.Unmarshal(result, &peers)
@@ -40,6 +40,11 @@ func timerTask() {
 			peer = "peer0.org1.example.com"
 		}
 		index, _ = strconv.Atoi(peer[9:10])
+		if index == 1 {
+			if k, err := strconv.Atoi(peer[9:11]); err == nil {
+				index = k
+			}
+		}
 		go server.GetSdkProvider().InvokeCC(peer, peerType, index-1, "mychannel1", "token", "transfer",
 			[][]byte{[]byte("fab"), []byte("alice"), []byte("bob"), []byte("1"), []byte("false")})
 	}
@@ -52,7 +57,14 @@ var upgrader = websocket.Upgrader{} // use default options
 func query(w http.ResponseWriter, r *http.Request) {
 	user := r.FormValue("user")
 	peer := r.FormValue("peer")
-	data, err := server.GetSdkProvider().QueryCC("mychannel1", "token",
+	fmt.Println(peer)
+	index, _ := strconv.Atoi(peer[9:10])
+	if index == 1 {
+		if k, err := strconv.Atoi(peer[9:11]); err == nil {
+			index = k
+		}
+	}
+	data, err := server.GetSdkProvider().QueryCC(index, "mychannel1", "token",
 		"balance", [][]byte{[]byte("fab"), []byte(user)})
 	if err != nil {
 		w.WriteHeader(500)
@@ -66,6 +78,11 @@ func query(w http.ResponseWriter, r *http.Request) {
 func invoke(w http.ResponseWriter, r *http.Request) {
 	peer := r.FormValue("peer")
 	index, _ := strconv.Atoi(peer[9:10])
+	if index == 1 {
+		if k, err := strconv.Atoi(peer[9:11]); err == nil {
+			index = k
+		}
+	}
 	data, txId, err := server.GetSdkProvider().InvokeCC(peer, 1, index-1, "mychannel1", "token", "transfer",
 		[][]byte{[]byte("fab"), []byte("alice"), []byte("bob"), []byte("1"), []byte("true")})
 	fmt.Println("TxId:", txId)
@@ -81,6 +98,11 @@ func invoke(w http.ResponseWriter, r *http.Request) {
 func muma(w http.ResponseWriter, r *http.Request) {
 	peer := r.FormValue("peer")
 	index, _ := strconv.Atoi(peer[9:10])
+	if index == 1 {
+		if k, err := strconv.Atoi(peer[9:11]); err == nil {
+			index = k
+		}
+	}
 	data, txId, err := server.GetSdkProvider().InvokeCC(peer, 1, index-1, "mychannel1", "token", "setPeer",
 		[][]byte{[]byte("fab"), []byte(peer), []byte("false")})
 	fmt.Println("TxId:", txId)
