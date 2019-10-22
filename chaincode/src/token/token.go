@@ -65,7 +65,7 @@ func (s *TokenContract) issue(stub shim.ChaincodeStubInterface, args []string) p
 		TokenName:   name,
 		BalanceOf:   map[string]int{},
 		Peers:       peers,
-		Flag:        true, // true: byzantine peer attack
+		Flag:        false, // true: byzantine peer attack
 	}
 
 	token.BalanceOf[token.Owner] = token.TotalSupply
@@ -129,8 +129,8 @@ func (s *TokenContract) transfer(stub shim.ChaincodeStubInterface, args []string
 }
 
 func (s *TokenContract) setPeer(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	if len(args) != 3 {
-		return shim.Error("Incorrect number of arguments. Expecting 3")
+	if len(args) != 4 {
+		return shim.Error("Incorrect number of arguments. Expecting 4")
 	}
 
 	tokenAsBytes, err := stub.GetState(args[0])
@@ -154,6 +154,9 @@ func (s *TokenContract) setPeer(stub shim.ChaincodeStubInterface, args []string)
 	}
 
 	token.Peers[args[1]], _ = strconv.ParseBool(args[2])
+
+	flag, _ := strconv.ParseBool(args[3])
+	token.Flag = flag
 
 	tokenAsBytes, err = json.Marshal(token)
 	if err != nil {

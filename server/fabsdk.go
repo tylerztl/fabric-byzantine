@@ -5,6 +5,9 @@ import (
 	"fabric-byzantine/server/helpers"
 	"fabric-byzantine/server/mysql"
 	"fmt"
+	"strconv"
+	"time"
+
 	"github.com/hyperledger/fabric-sdk-go/pkg/client/channel"
 	"github.com/hyperledger/fabric-sdk-go/pkg/client/event"
 	"github.com/hyperledger/fabric-sdk-go/pkg/client/ledger"
@@ -16,8 +19,6 @@ import (
 	"github.com/hyperledger/fabric-sdk-go/pkg/core/config"
 	"github.com/hyperledger/fabric-sdk-go/pkg/fab/events/deliverclient/seek"
 	"github.com/hyperledger/fabric-sdk-go/pkg/fabsdk"
-	"strconv"
-	"time"
 )
 
 var logger = helpers.GetLogger()
@@ -135,6 +136,11 @@ func (f *FabSdkProvider) InvokeCC(peer string, peerType int, index int, channelI
 		logger.Error("Failed to create new channel client: %v", err)
 		return nil, "", fmt.Errorf("Failed to create new channel client:  %s", orgInstance.Config.Name)
 	}
+
+	peers := make([]fab.Peer, len(f.Orgs))
+	for k, v := range f.Orgs {
+		peers[k] = v.Peers[0]
+	}
 	// Synchronous transaction
 	response, err := chClient.Execute(
 		channel.Request{
@@ -142,6 +148,7 @@ func (f *FabSdkProvider) InvokeCC(peer string, peerType int, index int, channelI
 			Fcn:         function,
 			Args:        args,
 		},
+		channel.WithTargets(peers...),
 		channel.WithRetry(retry.DefaultChannelOpts))
 	if err != nil {
 		logger.Error("[%s] failed invokeCC: %s", peer, err)
@@ -186,7 +193,7 @@ func (f *FabSdkProvider) QueryCC(index int, channelID, ccID, function string, ar
 		return nil, fmt.Errorf("Failed to create new channel client:  %s", orgInstance.Config.Name)
 	}
 
-	response, err := chClient.Query(channel.Request{ChaincodeID: ccID, Fcn: function, Args: args},
+	response, err := chClient.Query(channel.Request{ChaincodeID: ccID, Fcn: function, Args: args}, channel.WithTargets(orgInstance.Peers[0]),
 		channel.WithRetry(retry.DefaultChannelOpts))
 	if err != nil {
 		logger.Error("Failed QueryCC: %s", err)

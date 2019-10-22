@@ -64,7 +64,7 @@ func query(w http.ResponseWriter, r *http.Request) {
 			index = k
 		}
 	}
-	data, err := server.GetSdkProvider().QueryCC(index, "mychannel1", "token",
+	data, err := server.GetSdkProvider().QueryCC(index-1, "mychannel1", "token",
 		"balance", [][]byte{[]byte("fab"), []byte(user)})
 	if err != nil {
 		w.WriteHeader(500)
@@ -104,7 +104,7 @@ func muma(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	data, txId, err := server.GetSdkProvider().InvokeCC(peer, 1, index-1, "mychannel1", "token", "setPeer",
-		[][]byte{[]byte("fab"), []byte(peer), []byte("false")})
+		[][]byte{[]byte("fab"), []byte(peer), []byte("false"), []byte("false")})
 	fmt.Println("TxId:", txId)
 	if err != nil {
 		w.WriteHeader(500)
@@ -235,7 +235,7 @@ func main() {
 	defer mysql.CloseDB()
 
 	go server.GetSdkProvider().BlockListener("mychannel1")
-	go timerTask()
+	//go timerTask()
 
 	flag.Parse()
 	log.SetFlags(0)
