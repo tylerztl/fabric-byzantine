@@ -189,7 +189,17 @@ func (f *FabSdkProvider) InvokeCC(peer string, peerType int, index int, channelI
 	//channel.WithRetry(retry.DefaultChannelOpts))
 	if err != nil {
 		logger.Error("[%s] failed invokeCC: %s", peer, err)
-		return nil, "", err
+		TxChans.Range(func(key, value interface{}) bool {
+			datas, _ := json.Marshal(&TransactionInfo{
+				Status:   500,
+				TxId:     string(response.TransactionID),
+				DateTime: time.Now(),
+			})
+			value.(chan []byte) <- datas
+			return true
+		})
+
+		return nil, helpers.TransactionID(response.TransactionID), err
 	}
 
 	bFlage := false

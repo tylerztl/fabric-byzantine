@@ -301,7 +301,7 @@ func main() {
 	defer mysql.CloseDB()
 
 	go server.GetSdkProvider().BlockListener("mychannel1")
-	//go timerTask()
+	go timerTask()
 
 	flag.Parse()
 	log.SetFlags(0)
