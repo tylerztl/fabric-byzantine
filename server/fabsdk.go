@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/json"
 	"errors"
 	"fabric-byzantine/server/helpers"
 	"fabric-byzantine/server/mysql"
@@ -137,10 +138,46 @@ func (f *FabSdkProvider) InvokeCC(peer string, peerType int, index int, channelI
 		return nil, "", fmt.Errorf("Failed to create new channel client:  %s", orgInstance.Config.Name)
 	}
 
-	peers := make([]fab.Peer, len(f.Orgs))
-	for k, v := range f.Orgs {
-		peers[k] = v.Peers[0]
+	result, _ := f.QueryCC(0, "mychannel1", "token",
+		"getPeers", [][]byte{[]byte("fab")})
+	peers := make(map[string]bool)
+	json.Unmarshal(result, &peers)
+
+	nPeers := []int{} // normal peer
+	bPeers := []int{} // byzantine peer
+	for k, v := range peers {
+		index, _ := strconv.Atoi(k[9:10])
+		if index == 1 {
+			if k, err := strconv.Atoi(k[9:11]); err == nil {
+				index = k
+			}
+		}
+		index--
+		if v {
+			nPeers = append(nPeers, index)
+		} else {
+			bPeers = append(bPeers, index)
+		}
 	}
+	var targets []fab.Peer
+	if len(nPeers) >= 7 {
+		targets = make([]fab.Peer, len(nPeers))
+		for k, v := range nPeers {
+			targets[k] = f.Orgs[v].Peers[0]
+		}
+	} else if len(bPeers) >= 7 {
+		targets = make([]fab.Peer, len(bPeers))
+		for k, v := range bPeers {
+			targets[k] = f.Orgs[v].Peers[0]
+		}
+	} else {
+		targets = make([]fab.Peer, len(f.Orgs))
+		for k, v := range f.Orgs {
+			targets[k] = v.Peers[0]
+		}
+	}
+	fmt.Println("targets:", targets)
+
 	// Synchronous transaction
 	response, err := chClient.Execute(
 		channel.Request{
@@ -148,8 +185,8 @@ func (f *FabSdkProvider) InvokeCC(peer string, peerType int, index int, channelI
 			Fcn:         function,
 			Args:        args,
 		},
-		channel.WithTargets(peers...))
-		//channel.WithRetry(retry.DefaultChannelOpts))
+		channel.WithTargets(targets...))
+	//channel.WithRetry(retry.DefaultChannelOpts))
 	if err != nil {
 		logger.Error("[%s] failed invokeCC: %s", peer, err)
 		return nil, "", err

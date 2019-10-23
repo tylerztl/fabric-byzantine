@@ -7,7 +7,7 @@ SPDX-License-Identifier: Apache-2.0
 package invoke
 
 import (
-	//"bytes"
+	"bytes"
 
 	"github.com/hyperledger/fabric-sdk-go/pkg/common/errors/status"
 	"github.com/hyperledger/fabric-sdk-go/pkg/common/options"
@@ -137,13 +137,13 @@ func (f *EndorsementValidationHandler) Handle(requestContext *RequestContext, cl
 }
 
 func (f *EndorsementValidationHandler) validate(txProposalResponse []*fab.TransactionProposalResponse) error {
-	//var a1 *pb.ProposalResponse
-	for _, r := range txProposalResponse {
-		response := r.ProposalResponse.GetResponse()
-		if response.Status < int32(common.Status_SUCCESS) || response.Status >= int32(common.Status_BAD_REQUEST) {
-			return status.NewFromProposalResponse(r.ProposalResponse, r.Endorser)
-		}
-	}
+	var a1 *pb.ProposalResponse
+	//for _, r := range txProposalResponse {
+	//	response := r.ProposalResponse.GetResponse()
+	//	if response.Status < int32(common.Status_SUCCESS) || response.Status >= int32(common.Status_BAD_REQUEST) {
+	//		return status.NewFromProposalResponse(r.ProposalResponse, r.Endorser)
+	//	}
+	//}
 	//for n, r := range txProposalResponse {
 	//	response := r.ProposalResponse.GetResponse()
 	//	if response.Status < int32(common.Status_SUCCESS) || response.Status >= int32(common.Status_BAD_REQUEST) {
@@ -160,6 +160,26 @@ func (f *EndorsementValidationHandler) validate(txProposalResponse []*fab.Transa
 	//			"ProposalResponsePayloads do not match", nil)
 	//	}
 	//}
+	diff := 0
+	for n, r := range txProposalResponse {
+		response := r.ProposalResponse.GetResponse()
+		if response.Status < int32(common.Status_SUCCESS) || response.Status >= int32(common.Status_BAD_REQUEST) {
+			return status.NewFromProposalResponse(r.ProposalResponse, r.Endorser)
+		}
+		if n == 0 {
+			a1 = r.ProposalResponse
+			continue
+		}
+
+		if !bytes.Equal(a1.Payload, r.ProposalResponse.Payload) ||
+			!bytes.Equal(a1.GetResponse().Payload, response.Payload) {
+			diff++
+		}
+	}
+	if diff > 3 && diff < 7 {
+		return status.New(status.EndorserClientStatus, status.EndorsementMismatch.ToInt32(),
+			"ProposalResponsePayloads do not match", nil)
+	}
 
 	return nil
 }

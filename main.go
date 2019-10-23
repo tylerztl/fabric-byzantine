@@ -103,8 +103,9 @@ func muma(w http.ResponseWriter, r *http.Request) {
 			index = k
 		}
 	}
+	status := r.FormValue("status")
 	data, txId, err := server.GetSdkProvider().InvokeCC(peer, 1, index-1, "mychannel1", "token", "setPeer",
-		[][]byte{[]byte("fab"), []byte(peer), []byte("false"), []byte("false")})
+		[][]byte{[]byte("fab"), []byte(peer), []byte(status), []byte("false")})
 	fmt.Println("TxId:", txId)
 	if err != nil {
 		w.WriteHeader(500)
@@ -300,7 +301,7 @@ func main() {
 	defer mysql.CloseDB()
 
 	go server.GetSdkProvider().BlockListener("mychannel1")
-	go timerTask()
+	//go timerTask()
 
 	flag.Parse()
 	log.SetFlags(0)
