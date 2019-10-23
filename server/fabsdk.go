@@ -148,8 +148,8 @@ func (f *FabSdkProvider) InvokeCC(peer string, peerType int, index int, channelI
 			Fcn:         function,
 			Args:        args,
 		},
-		channel.WithTargets(peers...),
-		channel.WithRetry(retry.DefaultChannelOpts))
+		channel.WithTargets(peers...))
+		//channel.WithRetry(retry.DefaultChannelOpts))
 	if err != nil {
 		logger.Error("[%s] failed invokeCC: %s", peer, err)
 		return nil, "", err

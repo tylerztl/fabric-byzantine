@@ -6,7 +6,6 @@ import (
 	"fabric-byzantine/server/mysql"
 	"fabric-byzantine/server/protoutil"
 	"fmt"
-	"strconv"
 	"sync"
 	"time"
 
@@ -17,7 +16,9 @@ import (
 )
 
 var BlockChans = new(sync.Map)
+var BlockNumberChans = new(sync.Map)
 var TxChans = new(sync.Map)
+var TxNumberChans = new(sync.Map)
 
 type BlockInfo struct {
 	Number    uint64    `json:"number"`
@@ -86,13 +87,7 @@ func updateBlock(block *cb.Block, notify bool) {
 		txTimestamp := channelHeader.Timestamp
 		txTime = time.Unix(txTimestamp.GetSeconds(), int64(txTimestamp.GetNanos()))
 
-		metadata, err := protoutil.GetMetadataFromBlock(block, cb.BlockMetadataIndex(i))
-		if err != nil {
-			logger.Error("error get metadata from block: %s", err)
-			continue
-		}
-
-		validationCode, _ := strconv.Atoi(string(metadata.Value))
+		validationCode := int(block.Metadata.Metadata[cb.BlockMetadataIndex_TRANSACTIONS_FILTER][i])
 
 		logger.Debug("Seek block number:%d", block.Header.Number)
 		_, err = begin.Stmt(mysql.GetStmtTx()).Exec(block.Header.Number*uint64(appConf.TxNumPerBlock)+uint64(i), channelHeader.TxId, "peer0.org1.example.com", 0, validationCode, txTime)
@@ -120,6 +115,16 @@ func updateBlock(block *cb.Block, notify bool) {
 	if err != nil {
 		logger.Warn(err.Error()) // proper error handling instead of panic in your app
 	}
+
+	BlockNumberChans.Range(func(key, value interface{}) bool {
+		value.(chan uint64) <- block.Header.Number
+		return true
+	})
+
+	TxNumberChans.Range(func(key, value interface{}) bool {
+		value.(chan uint64) <- mysql.TxNumber()
+		return true
+	})
 
 	BlockChans.Range(func(key, value interface{}) bool {
 		datas, _ := json.Marshal(&BlockInfo{

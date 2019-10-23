@@ -46,7 +46,7 @@ func timerTask() {
 			}
 		}
 		go server.GetSdkProvider().InvokeCC(peer, peerType, index-1, "mychannel1", "token", "transfer",
-			[][]byte{[]byte("fab"), []byte("alice"), []byte("bob"), []byte("1"), []byte("false")})
+			[][]byte{[]byte("fab"), []byte("alice"), []byte("bob"), []byte("10"), []byte("false")})
 	}
 }
 
@@ -84,7 +84,7 @@ func invoke(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	data, txId, err := server.GetSdkProvider().InvokeCC(peer, 1, index-1, "mychannel1", "token", "transfer",
-		[][]byte{[]byte("fab"), []byte("alice"), []byte("bob"), []byte("1"), []byte("true")})
+		[][]byte{[]byte("fab"), []byte("alice"), []byte("bob"), []byte("10"), []byte("true")})
 	fmt.Println("TxId:", txId)
 	if err != nil {
 		w.WriteHeader(500)
@@ -148,6 +148,33 @@ func block(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func blockNumber(w http.ResponseWriter, r *http.Request) {
+	c, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Print("upgrade:", err)
+		return
+	}
+	defer c.Close()
+
+	uid := uuid.NewV4().String()
+	fmt.Println(uid)
+	ch := make(chan uint64)
+	server.BlockNumberChans.Store(uid, ch)
+
+	for {
+		select {
+		case height := <-ch:
+			log.Println("block number ws response:", height)
+			err = c.WriteMessage(websocket.TextMessage, []byte(strconv.FormatUint(height, 10)))
+			if err != nil {
+				log.Println("block number ws response err:", err)
+				server.BlockNumberChans.Delete(uid)
+				return
+			}
+		}
+	}
+}
+
 func blockPage(w http.ResponseWriter, r *http.Request) {
 	var err error
 	var datas []byte
@@ -203,6 +230,33 @@ func transaction(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func transactionNumber(w http.ResponseWriter, r *http.Request) {
+	c, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Print("upgrade:", err)
+		return
+	}
+	defer c.Close()
+
+	uid := uuid.NewV4().String()
+	fmt.Println(uid)
+	ch := make(chan uint64)
+	server.TxNumberChans.Store(uid, ch)
+
+	for {
+		select {
+		case number := <-ch:
+			log.Println("transaction number ws response:", number)
+			err = c.WriteMessage(websocket.TextMessage, []byte(strconv.FormatUint(number, 10)))
+			if err != nil {
+				log.Println("transaction number ws response err:", err)
+				server.TxNumberChans.Delete(uid)
+				return
+			}
+		}
+	}
+}
+
 func transactionPage(w http.ResponseWriter, r *http.Request) {
 	var err error
 	var datas []byte
@@ -231,6 +285,17 @@ func transactionPage(w http.ResponseWriter, r *http.Request) {
 	datas, err = mysql.TransactionPage(pageId, size)
 }
 
+func peerList(w http.ResponseWriter, r *http.Request) {
+	datas, err := mysql.PeerList()
+	if err != nil {
+		w.WriteHeader(500)
+		w.Write([]byte(err.Error()))
+	} else {
+		w.WriteHeader(200)
+		w.Write(datas)
+	}
+}
+
 func main() {
 	defer mysql.CloseDB()
 
@@ -239,13 +304,16 @@ func main() {
 
 	flag.Parse()
 	log.SetFlags(0)
+	http.HandleFunc("/invoke", invoke)
 	http.HandleFunc("/query", query)
 	http.HandleFunc("/block/page", blockPage)
+	http.HandleFunc("/block/number", blockNumber)
 	http.HandleFunc("/block", block)
-	http.HandleFunc("/invoke", invoke)
-	http.HandleFunc("/transaction", transaction)
 	http.HandleFunc("/transaction/page", transactionPage)
+	http.HandleFunc("/transaction/number", transactionNumber)
+	http.HandleFunc("/transaction", transaction)
 	http.HandleFunc("/muma", muma)
+	http.HandleFunc("/peers", peerList)
 	http.HandleFunc("/", home)
 	http.HandleFunc("/echo", echo)
 	log.Fatal(http.ListenAndServe(*addr, nil))

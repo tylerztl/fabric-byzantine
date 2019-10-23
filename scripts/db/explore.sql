@@ -16,9 +16,8 @@ PRIMARY KEY (`tx_index`)
 
 CREATE TABLE IF NOT EXISTS `peer` (
 `name` VARCHAR(50)  NOT NULL   COMMENT '',
-`request` VARCHAR(50)  NOT NULL   COMMENT '',
-`hostname` VARCHAR(50)  NOT NULL   COMMENT '',
-`organization` VARCHAR(50)  NOT NULL   COMMENT '',
+`peer_type` INT  NOT NULL   COMMENT '',
+`peer_status` INT  NOT NULL   COMMENT '',
 PRIMARY KEY (`name`)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 

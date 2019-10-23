@@ -1,20 +1,10 @@
-INSERT INTO `peer` (`name`, `request`, `hostname`, `organization`)
-VALUES ('peer1','grpcs://localhost:7051','ZIG','ZHIGUI CORP');
-INSERT INTO `peer` (`name`, `request`, `hostname`, `organization`)
-VALUES ('peer2','grpcs://localhost:7051','ZIG','ZHIGUI CORP');
-INSERT INTO `peer` (`name`, `request`, `hostname`, `organization`)
-VALUES ('peer3','grpcs://localhost:7051','ZIG','ZHIGUI CORP');
-INSERT INTO `peer` (`name`, `request`, `hostname`, `organization`)
-VALUES ('peer4','grpcs://localhost:7051','ZIG','ZHIGUI CORP');
-INSERT INTO `peer` (`name`, `request`, `hostname`, `organization`)
-VALUES ('peer5','grpcs://localhost:7051','ZIG','ZHIGUI CORP');
-INSERT INTO `peer` (`name`, `request`, `hostname`, `organization`)
-VALUES ('peer6','grpcs://localhost:7051','ZIG','ZHIGUI CORP');
-INSERT INTO `peer` (`name`, `request`, `hostname`, `organization`)
-VALUES ('peer7','grpcs://localhost:7051','ZIG','ZHIGUI CORP');
-INSERT INTO `peer` (`name`, `request`, `hostname`, `organization`)
-VALUES ('peer8','grpcs://localhost:7051','ZIG','ZHIGUI CORP');
-INSERT INTO `peer` (`name`, `request`, `hostname`, `organization`)
-VALUES ('peer9','grpcs://localhost:7051','ZIG','ZHIGUI CORP');
-INSERT INTO `peer` (`name`, `request`, `hostname`, `organization`)
-VALUES ('peer10','grpcs://localhost:7051','ZIG','ZHIGUI CORP');
+INSERT INTO `peer` (`name`, `peer_type`, `peer_status`) VALUES ('peer0.org1.example.com', 0, 0);
+INSERT INTO `peer` (`name`, `peer_type`, `peer_status`) VALUES ('peer0.org2.example.com', 0, 0);
+INSERT INTO `peer` (`name`, `peer_type`, `peer_status`) VALUES ('peer0.org3.example.com', 0, 0);
+INSERT INTO `peer` (`name`, `peer_type`, `peer_status`) VALUES ('peer0.org4.example.com', 0, 0);
+INSERT INTO `peer` (`name`, `peer_type`, `peer_status`) VALUES ('peer0.org5.example.com', 0, 0);
+INSERT INTO `peer` (`name`, `peer_type`, `peer_status`) VALUES ('peer0.org6.example.com', 0, 0);
+INSERT INTO `peer` (`name`, `peer_type`, `peer_status`) VALUES ('peer0.org7.example.com', 0, 0);
+INSERT INTO `peer` (`name`, `peer_type`, `peer_status`) VALUES ('peer0.org8.example.com', 0, 0);
+INSERT INTO `peer` (`name`, `peer_type`, `peer_status`) VALUES ('peer0.org9.example.com', 0, 0);
+INSERT INTO `peer` (`name`, `peer_type`, `peer_status`) VALUES ('peer0.org10.example.com', 0, 0);
