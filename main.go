@@ -18,7 +18,7 @@ import (
 )
 
 func timerTask() {
-	c := time.Tick(5 * time.Second)
+	c := time.Tick(20 * time.Second)
 	for {
 		<-c
 		result, _ := server.GetSdkProvider().QueryCC(0, "mychannel1", "token",
@@ -27,7 +27,6 @@ func timerTask() {
 		json.Unmarshal(result, &peers)
 
 		peer := ""
-		peerType := 0 // normal peer
 		for k, v := range peers {
 			if v {
 				peer = k
@@ -36,7 +35,6 @@ func timerTask() {
 		}
 		index := 0
 		if peer == "" {
-			peerType = 1 // byzantine peer
 			peer = "peer0.org1.example.com"
 		}
 		index, _ = strconv.Atoi(peer[9:10])
@@ -45,7 +43,7 @@ func timerTask() {
 				index = k
 			}
 		}
-		go server.GetSdkProvider().InvokeCC(peer, peerType, index-1, "mychannel1", "token", "transfer",
+		go server.GetSdkProvider().InvokeCC(peer, 0, index-1, "mychannel1", "token", "transfer",
 			[][]byte{[]byte("fab"), []byte("alice"), []byte("bob"), []byte("10"), []byte("false")})
 	}
 }
@@ -104,13 +102,15 @@ func muma(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	status := r.FormValue("status")
-	data, txId, err := server.GetSdkProvider().InvokeCC(peer, 1, index-1, "mychannel1", "token", "setPeer",
+	data, txId, err := server.GetSdkProvider().InvokeCC(peer, 0, index-1, "mychannel1", "token", "setPeer",
 		[][]byte{[]byte("fab"), []byte(peer), []byte(status), []byte("false")})
 	fmt.Println("TxId:", txId)
 	if err != nil {
 		w.WriteHeader(500)
 		w.Write([]byte(err.Error()))
 	} else {
+		go server.ByzantineNum()
+
 		w.WriteHeader(200)
 		w.Write(data)
 	}
@@ -297,6 +297,17 @@ func peerList(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func getStatistics(w http.ResponseWriter, r *http.Request) {
+	datas, err := json.Marshal(server.StatisticsTable)
+	if err != nil {
+		w.WriteHeader(500)
+		w.Write([]byte(err.Error()))
+	} else {
+		w.WriteHeader(200)
+		w.Write(datas)
+	}
+}
+
 func main() {
 	defer mysql.CloseDB()
 
@@ -315,6 +326,7 @@ func main() {
 	http.HandleFunc("/transaction", transaction)
 	http.HandleFunc("/muma", muma)
 	http.HandleFunc("/peers", peerList)
+	http.HandleFunc("/statistics", getStatistics)
 	http.HandleFunc("/", home)
 	http.HandleFunc("/echo", echo)
 	log.Fatal(http.ListenAndServe(*addr, nil))

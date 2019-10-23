@@ -199,6 +199,17 @@ func (f *FabSdkProvider) InvokeCC(peer string, peerType int, index int, channelI
 			return true
 		})
 
+		if function == "transfer" {
+			num := int8(len(bPeers))
+			t := GetTable(num)
+			if peerType == 0 {
+				t.NormalTx++
+			} else {
+				t.ByzantineTx++
+			}
+			StatisticsTable[num] = t
+		}
+
 		return nil, helpers.TransactionID(response.TransactionID), err
 	}
 
@@ -221,6 +232,19 @@ func (f *FabSdkProvider) InvokeCC(peer string, peerType int, index int, channelI
 		if err := mysql.UpdateTransaction(peer, string(response.TransactionID), peerType); err != nil {
 			logger.Error("UpdateTransaction err:%s", err.Error())
 		}
+	}
+
+	if function == "transfer" {
+		num := int8(len(bPeers))
+		t := GetTable(num)
+		if peerType == 0 {
+			t.NormalTx++
+			t.NormalCommit++
+		} else {
+			t.ByzantineTx++
+			t.ByzantineCommit++
+		}
+		StatisticsTable[num] = t
 	}
 
 	logger.Debug("Successfully invoke chaincode  ccName[%s] func[%v] txId[%v]",
