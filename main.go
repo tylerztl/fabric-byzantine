@@ -111,6 +111,11 @@ func muma(w http.ResponseWriter, r *http.Request) {
 	} else {
 		go server.ByzantineNum()
 
+		b, _ := strconv.ParseBool(status)
+		if !b {
+			mysql.UpdatePeers(peer, 1)
+		}
+		
 		w.WriteHeader(200)
 		w.Write(data)
 	}

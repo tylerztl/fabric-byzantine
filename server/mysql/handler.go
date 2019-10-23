@@ -11,6 +11,7 @@ var (
 	updateTX    = "UPDATE transaction SET peer=?,tx_type=? WHERE tx_id=?;"
 	queryTX     = "select count(*) from transaction where tx_id=?;"
 	peerList    = "select * from peer;"
+	updatePeer    = "UPDATE peer SET peer_type=? WHERE name=?;"
 	txNumber    = "select sum(tx_count) as tx from block;"
 )
 
@@ -42,6 +43,10 @@ func UpdateTransaction(peer, txId string, txType int) error {
 
 func PeerList() ([]byte, error) {
 	return GetDBMgr().QueryRows(peerList)
+}
+
+func UpdatePeers(peer string, peerType int) error {
+	return GetDBMgr().InsertOrUpdate(updatePeer, peerType, peer)
 }
 
 func TxNumber() uint64 {
