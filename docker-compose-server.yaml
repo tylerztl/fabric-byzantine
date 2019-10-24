@@ -12,13 +12,14 @@ networks:
 
 services:
   fabric-grpc:
-    container_name: fabric-grpc
-    image: zhigui/fabric-grpc:latest
+    container_name: fabric-byzantine
+    image: hyperledger/fabric-byzantine:latest
     ports:
       - 8080:8080
     volumes:
-      - ./conf:/go/src/fabric-sdk-go/conf
-      - ./artifacts:/go/src/fabric-sdk-go/artifacts
-      - /tmp/fabric-server-logs:/go/src/fabric-sdk-go/logs
+      - ./conf:/go/src/fabric-byzantine/conf
+      - ./channel-artifacts:/go/src/fabric-byzantine/channel-artifacts
+      - ./crypto-config:/go/src/fabric-byzantine/crypto-config
+      - /tmp/fabric-byzantine-logs:/go/src/fabric-byzantine/logs
     networks:
       - fabsdk
