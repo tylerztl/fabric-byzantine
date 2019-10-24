@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fabric-byzantine/server"
-	"fabric-byzantine/server/helpers"
 	"fabric-byzantine/server/mysql"
 	"flag"
 	"fmt"
@@ -49,9 +48,13 @@ func timerTask() {
 	}
 }
 
-var addr = flag.String("addr", helpers.GetAppConf().Conf.Host+":8080", "http service address")
+var addr = flag.String("addr", ":8080", "http service address")
 
-var upgrader = websocket.Upgrader{} // use default options
+var upgrader = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
+} // use default options
 
 func query(w http.ResponseWriter, r *http.Request) {
 	user := r.FormValue("user")

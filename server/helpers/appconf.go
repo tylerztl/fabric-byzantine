@@ -12,7 +12,6 @@ type AppConf struct {
 }
 
 type Application struct {
-	Host          string          `yaml:"host"`
 	LogPath       string          `yaml:"logPath"`
 	LogLevel      int8            `yaml:"logLevel"`
 	OrgInfo       []*OrgInfo      `yaml:"org"`
