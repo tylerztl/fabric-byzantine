@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fabric-byzantine/server"
+	"fabric-byzantine/server/helpers"
 	"fabric-byzantine/server/mysql"
 	"flag"
 	"fmt"
@@ -48,7 +49,7 @@ func timerTask() {
 	}
 }
 
-var addr = flag.String("addr", ":8080", "http service address")
+var addr = flag.String("addr", helpers.GetAppConf().Conf.Host+":8080", "http service address")
 
 var upgrader = websocket.Upgrader{} // use default options
 
@@ -115,7 +116,7 @@ func muma(w http.ResponseWriter, r *http.Request) {
 		if !b {
 			mysql.UpdatePeers(peer, 1)
 		}
-		
+
 		w.WriteHeader(200)
 		w.Write(data)
 	}

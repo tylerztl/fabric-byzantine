@@ -1,6 +1,7 @@
 ---
 
 application:
+  host: localhost
   logPath: logs
   logLevel: 7
   org:
