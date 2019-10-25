@@ -8,6 +8,7 @@ import (
 	"flag"
 	"fmt"
 	"html/template"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"strconv"
@@ -98,16 +99,16 @@ func invoke(w http.ResponseWriter, r *http.Request) {
 }
 
 func muma(w http.ResponseWriter, r *http.Request) {
-	peer := r.FormValue("peer")
-	index, _ := strconv.Atoi(peer[9:10])
-	if index == 1 {
-		if k, err := strconv.Atoi(peer[9:11]); err == nil {
-			index = k
-		}
+	rBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		w.WriteHeader(500)
+		w.Write([]byte(err.Error()))
+		return
 	}
-	status := r.FormValue("status")
-	data, txId, err := server.GetSdkProvider().InvokeCC(peer, 0, index-1, "mychannel1", "token", "setPeer",
-		[][]byte{[]byte("fab"), []byte(peer), []byte(status), []byte("false")})
+
+	data, txId, err := server.GetSdkProvider().InvokeCC("peer0.org1.example.com", 0, 0, "mychannel1", "token", "setPeer",
+		[][]byte{[]byte("fab"), rBody, []byte("false")})
+
 	fmt.Println("TxId:", txId)
 	if err != nil {
 		w.WriteHeader(500)
@@ -115,9 +116,14 @@ func muma(w http.ResponseWriter, r *http.Request) {
 	} else {
 		go server.ByzantineNum()
 
-		b, _ := strconv.ParseBool(status)
-		if !b {
-			mysql.UpdatePeers(peer, 1)
+		var peers map[string]string
+		if err = json.Unmarshal(rBody, &peers); err == nil {
+			for k, v := range peers {
+				b, _ := strconv.ParseBool(v)
+				if !b {
+					mysql.UpdatePeers(k, 1)
+				}
+			}
 		}
 
 		w.WriteHeader(200)

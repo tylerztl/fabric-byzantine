@@ -129,8 +129,8 @@ func (s *TokenContract) transfer(stub shim.ChaincodeStubInterface, args []string
 }
 
 func (s *TokenContract) setPeer(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	if len(args) != 4 {
-		return shim.Error("Incorrect number of arguments. Expecting 4")
+	if len(args) != 3 {
+		return shim.Error("Incorrect number of arguments. Expecting 3")
 	}
 
 	tokenAsBytes, err := stub.GetState(args[0])
@@ -153,9 +153,20 @@ func (s *TokenContract) setPeer(stub shim.ChaincodeStubInterface, args []string)
 		return shim.Error(err.Error())
 	}
 
-	token.Peers[args[1]], _ = strconv.ParseBool(args[2])
+	var peers map[string]string
+	if err = json.Unmarshal([]byte(args[1]), &peers); err != nil {
+		return shim.Error(err.Error())
+	}
 
-	flag, _ := strconv.ParseBool(args[3])
+	for k, v := range peers {
+		if _, ok := token.Peers[k]; ok {
+			token.Peers[k], _ = strconv.ParseBool(v)
+		}else {
+			return shim.Error("invaild peer params")
+		}
+	}
+	
+	flag, _ := strconv.ParseBool(args[2])
 	token.Flag = flag
 
 	tokenAsBytes, err = json.Marshal(token)
