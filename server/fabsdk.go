@@ -194,6 +194,8 @@ func (f *FabSdkProvider) InvokeCC(peer string, peerType int, index int, channelI
 				Status:   500,
 				TxId:     string(response.TransactionID),
 				DateTime: time.Now(),
+				Peer:     peer,
+				TxType:   peerType,
 			})
 			value.(chan []byte) <- datas
 			return true
@@ -215,17 +217,29 @@ func (f *FabSdkProvider) InvokeCC(peer string, peerType int, index int, channelI
 
 	bFlage := false
 	timeout := 0
+	var valQuery []byte
+	var errQuery error
 	for {
 		if bFlage || timeout > 10 {
 			break
 		}
 		select {
 		case <-time.After(time.Millisecond * time.Duration(500)):
-			val, _ := mysql.QueryTransaction(string(response.TransactionID))
-			count, _ := strconv.Atoi(string(val))
-			bFlage = count == 1
+			valQuery, errQuery = mysql.QueryTransaction(string(response.TransactionID))
+			bFlage = errQuery == nil
 			timeout++
 		}
+	}
+
+	var rawDatas []map[string]string
+	if err := json.Unmarshal(valQuery, &rawDatas); err == nil {
+		rawDatas[0]["peer"] = peer
+		rawDatas[0]["tx_type"] = strconv.Itoa(peerType)
+		TxChans.Range(func(key, value interface{}) bool {
+			datas, _ := json.Marshal(rawDatas[0])
+			value.(chan []byte) <- datas
+			return true
+		})
 	}
 
 	if bFlage {

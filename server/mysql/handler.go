@@ -9,7 +9,7 @@ var (
 	blockPage   = "select * from (select number from block order by number desc limit ?,?) a left join block b on a.number = b.number;"
 	txPage      = "select * from (select tx_index from transaction order by tx_index desc limit ?,?) a left join transaction b on a.tx_index = b.tx_index;"
 	updateTX    = "UPDATE transaction SET peer=?,tx_type=? WHERE tx_id=?;"
-	queryTX     = "select count(*) from transaction where tx_id=?;"
+	queryTX     = "select * from transaction where tx_id=?;"
 	peerList    = "select * from peer;"
 	updatePeer    = "UPDATE peer SET peer_type=? WHERE name=?;"
 	txNumber    = "select sum(tx_count) as tx from block;"
@@ -34,7 +34,7 @@ func TransactionPage(pageId, size int) ([]byte, error) {
 }
 
 func QueryTransaction(txId string) ([]byte, error) {
-	return GetDBMgr().QueryValue(queryTX, txId)
+	return GetDBMgr().QueryRows(queryTX, txId)
 }
 
 func UpdateTransaction(peer, txId string, txType int) error {

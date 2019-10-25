@@ -21,29 +21,29 @@ func timerTask() {
 	c := time.Tick(20 * time.Second)
 	for {
 		<-c
-		result, _ := server.GetSdkProvider().QueryCC(0, "mychannel1", "token",
-			"getPeers", [][]byte{[]byte("fab")})
-		peers := make(map[string]bool)
-		json.Unmarshal(result, &peers)
-
-		peer := ""
-		for k, v := range peers {
-			if v {
-				peer = k
-				break
-			}
-		}
-		index := 0
-		if peer == "" {
-			peer = "peer0.org1.example.com"
-		}
-		index, _ = strconv.Atoi(peer[9:10])
-		if index == 1 {
-			if k, err := strconv.Atoi(peer[9:11]); err == nil {
-				index = k
-			}
-		}
-		go server.GetSdkProvider().InvokeCC(peer, 0, index-1, "mychannel1", "token", "transfer",
+		//result, _ := server.GetSdkProvider().QueryCC(0, "mychannel1", "token",
+		//	"getPeers", [][]byte{[]byte("fab")})
+		//peers := make(map[string]bool)
+		//json.Unmarshal(result, &peers)
+		//
+		//peer := ""
+		//for k, v := range peers {
+		//	if v {
+		//		peer = k
+		//		break
+		//	}
+		//}
+		//index := 0
+		//if peer == "" {
+		//	peer = "peer0.org1.example.com"
+		//}
+		//index, _ = strconv.Atoi(peer[9:10])
+		//if index == 1 {
+		//	if k, err := strconv.Atoi(peer[9:11]); err == nil {
+		//		index = k
+		//	}
+		//}
+		go server.GetSdkProvider().InvokeCC("peer0.org1.example.com", 0, 0, "mychannel1", "token", "transfer",
 			[][]byte{[]byte("fab"), []byte("alice"), []byte("bob"), []byte("10"), []byte("false")})
 	}
 }
