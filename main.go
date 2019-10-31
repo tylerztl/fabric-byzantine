@@ -108,8 +108,13 @@ func invoke(w http.ResponseWriter, r *http.Request) {
 
 func muma(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
 	w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
 	w.Header().Set("content-type", "application/json")
+
+	if r.Method == "OPTIONS" {
+		return
+	}
 
 	rBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
