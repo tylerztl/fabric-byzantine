@@ -58,6 +58,10 @@ var upgrader = websocket.Upgrader{
 } // use default options
 
 func query(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("content-type", "application/json")
+
 	user := r.FormValue("user")
 	peer := r.FormValue("peer")
 	fmt.Println(peer)
@@ -79,6 +83,10 @@ func query(w http.ResponseWriter, r *http.Request) {
 }
 
 func invoke(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("content-type", "application/json")
+
 	peer := r.FormValue("peer")
 	index, _ := strconv.Atoi(peer[9:10])
 	if index == 1 {
@@ -99,6 +107,10 @@ func invoke(w http.ResponseWriter, r *http.Request) {
 }
 
 func muma(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("content-type", "application/json")
+
 	rBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		w.WriteHeader(500)
@@ -192,6 +204,10 @@ func blockNumber(w http.ResponseWriter, r *http.Request) {
 }
 
 func blockPage(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("content-type", "application/json")
+
 	var err error
 	var datas []byte
 	defer func() {
@@ -274,6 +290,10 @@ func transactionNumber(w http.ResponseWriter, r *http.Request) {
 }
 
 func transactionPage(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("content-type", "application/json")
+
 	var err error
 	var datas []byte
 	defer func() {
@@ -302,6 +322,10 @@ func transactionPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func peerList(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("content-type", "application/json")
+
 	datas, err := mysql.PeerList()
 	if err != nil {
 		w.WriteHeader(500)
@@ -313,6 +337,10 @@ func peerList(w http.ResponseWriter, r *http.Request) {
 }
 
 func getStatistics(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("content-type", "application/json")
+
 	datas, err := json.Marshal(server.StatisticsTable)
 	if err != nil {
 		w.WriteHeader(500)
