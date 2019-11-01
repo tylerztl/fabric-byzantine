@@ -12,8 +12,8 @@ networks:
 
 services:
   fabric-grpc:
-    container_name: fabric-byzantine
-    image: hyperledger/fabric-byzantine:latest
+    container_name: 57suo-back-end
+    image: harbor.zhigui.com/57suo/back-end:latest
     ports:
       - 8080:8080
     volumes:
