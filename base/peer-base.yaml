@@ -7,7 +7,7 @@ version: '2'
 
 services:
   peer-base:
-    image: hyperledger/fabric-peer:$IMAGE_TAG
+    image: harbor.zhigui.com/57suo/fabric-peer:latest
     environment:
       - GODEBUG=netdns=go
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
@@ -28,7 +28,7 @@ services:
     command: peer node start
 
   orderer-base:
-    image: harbor.zhigui.com/sbft/fabric-orderer:amd64-latest
+    image: harbor.zhigui.com/57suo/fabric-orderer:latest
     environment:
       - GODEBUG=netdns=go
       - ORDERER_GENERAL_PROFILE_ENABLED=true
