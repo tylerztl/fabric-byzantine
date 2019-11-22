@@ -43,6 +43,13 @@ func NewSelectAndEndorseHandler(next ...Handler) Handler {
 	}
 }
 
+func NewSelectAndEndorseHandlerWithOpts(provider TxnHeaderOptsProvider, next ...Handler) Handler {
+	return &SelectAndEndorseHandler{
+		EndorsementHandler: NewEndorsementHandlerWithOpts(provider),
+		next:               getNext(next),
+	}
+}
+
 // Handle selects endorsers and sends proposals to the endorsers
 func (e *SelectAndEndorseHandler) Handle(requestContext *RequestContext, clientContext *ClientContext) {
 	var ccCalls []*fab.ChaincodeCall

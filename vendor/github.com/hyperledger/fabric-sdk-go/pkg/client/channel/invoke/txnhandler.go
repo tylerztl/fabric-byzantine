@@ -248,6 +248,14 @@ func NewExecuteHandler(next ...Handler) Handler {
 	)
 }
 
+func NewExecuteHandlerWithOpts(provider TxnHeaderOptsProvider, next ...Handler) Handler {
+	return NewSelectAndEndorseHandlerWithOpts(provider,
+		NewEndorsementValidationHandler(
+			NewSignatureValidationHandler(NewCommitHandler(next...)),
+		),
+	)
+}
+
 //NewProposalProcessorHandler returns a handler that selects proposal processors
 func NewProposalProcessorHandler(next ...Handler) *ProposalProcessorHandler {
 	return &ProposalProcessorHandler{next: getNext(next)}
@@ -259,8 +267,8 @@ func NewEndorsementHandler(next ...Handler) *EndorsementHandler {
 }
 
 //NewEndorsementHandlerWithOpts returns a handler that endorses a transaction proposal
-func NewEndorsementHandlerWithOpts(next Handler, provider TxnHeaderOptsProvider) *EndorsementHandler {
-	return &EndorsementHandler{next: next, headerOptsProvider: provider}
+func NewEndorsementHandlerWithOpts(provider TxnHeaderOptsProvider, next ...Handler) *EndorsementHandler {
+	return &EndorsementHandler{next: getNext(next), headerOptsProvider: provider}
 }
 
 //NewEndorsementValidationHandler returns a handler that validates an endorsement

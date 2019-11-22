@@ -56,13 +56,13 @@ func registerBlockEvent(eventClient *event.Client) {
 			if flag {
 				flag = false
 			} else {
-				go updateBlock(e.Block, true)
+				go updateBlock(e.Block)
 			}
 		}
 	}
 }
 
-func updateBlock(block *cb.Block, notify bool) {
+func updateBlock(block *cb.Block) {
 	if block.Header.Number == 0 {
 		return
 	}
@@ -92,7 +92,8 @@ func updateBlock(block *cb.Block, notify bool) {
 		validationCode := int(block.Metadata.Metadata[cb.BlockMetadataIndex_TRANSACTIONS_FILTER][i])
 
 		logger.Debug("Seek block number:%d", block.Header.Number)
-		_, err = begin.Stmt(mysql.GetStmtTx()).Exec(block.Header.Number*uint64(appConf.TxNumPerBlock)+uint64(i), channelHeader.TxId, "peer0.org1.example.com", 0, validationCode, txTime)
+		_, err = begin.Stmt(mysql.GetStmtTx()).Exec(block.Header.Number*uint64(appConf.TxNumPerBlock)+uint64(i), block.Header.Number,
+			channelHeader.TxId, "peer0.org1.example.com", 0, validationCode, txTime)
 		if err != nil {
 			logger.Warn(err.Error()) // proper error handling instead of panic in your app
 		}
@@ -103,7 +104,12 @@ func updateBlock(block *cb.Block, notify bool) {
 		//}'
 	}
 
-	_, err = begin.Stmt(mysql.GetStmtBlock()).Exec(block.Header.Number, hex.EncodeToString(block.Header.DataHash), txLen, txTime)
+	aliceBalance, _ := GetSdkProvider().QueryCC(0, "mychannel1", "token",
+		"balance", [][]byte{[]byte("fab"), []byte("alice")})
+	bobBalance, _ := GetSdkProvider().QueryCC(0, "mychannel1", "token",
+		"balance", [][]byte{[]byte("fab"), []byte("bob")})
+
+	_, err = begin.Stmt(mysql.GetStmtBlock()).Exec(block.Header.Number, hex.EncodeToString(block.Header.DataHash), txLen, txTime, aliceBalance, bobBalance, 0)
 	if err != nil {
 		logger.Warn(err.Error()) // proper error handling instead of panic in your app
 	}
@@ -157,7 +163,7 @@ func syncBlock(ledgerClient *ledger.Client, targets fab.Peer) {
 			if err != nil {
 				panic(err.Error())
 			}
-			go updateBlock(block, false)
+			go updateBlock(block)
 		}
 	}
 }

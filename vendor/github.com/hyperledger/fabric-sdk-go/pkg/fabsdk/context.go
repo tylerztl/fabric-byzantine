@@ -48,7 +48,7 @@ func WithOrg(org string) ContextOption {
 // don't include neither username nor identity
 var ErrAnonymousIdentity = errors.New("missing credentials")
 
-func (sdk *FabricSDK) newIdentity(options ...ContextOption) (msp.SigningIdentity, error) {
+func (sdk *FabricSDK) NewIdentity(options ...ContextOption) (msp.SigningIdentity, error) {
 	opts := identityOptions{
 		orgName: sdk.provider.IdentityConfig().Client().Organization,
 	}

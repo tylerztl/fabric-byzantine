@@ -1,6 +1,8 @@
 package server
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fabric-byzantine/server/helpers"
@@ -20,6 +22,8 @@ import (
 	"github.com/hyperledger/fabric-sdk-go/pkg/core/config"
 	"github.com/hyperledger/fabric-sdk-go/pkg/fab/events/deliverclient/seek"
 	"github.com/hyperledger/fabric-sdk-go/pkg/fabsdk"
+	"github.com/hyperledger/fabric/bccsp"
+	"github.com/hyperledger/fabric/bccsp/factory"
 )
 
 var logger = helpers.GetLogger()
@@ -138,6 +142,32 @@ func (f *FabSdkProvider) InvokeCC(peer string, peerType int, index int, channelI
 		return nil, "", fmt.Errorf("Failed to create new channel client:  %s", orgInstance.Config.Name)
 	}
 
+	signer, err := f.Sdk.NewIdentity(fabsdk.WithUser(orgInstance.Config.User), fabsdk.WithOrg(orgInstance.Config.Name))
+	if err != nil {
+		return nil, "", fmt.Errorf("error new identity: %v", err)
+	}
+	creator, err := signer.Serialize()
+	if err != nil {
+		return nil, "", fmt.Errorf("error serializing identity: %v", err)
+	}
+	nonce := make([]byte, 24)
+	_, err = rand.Read(nonce)
+	if err != nil {
+		return nil, "", fmt.Errorf("error getting random bytes: %v", err)
+	}
+	//nonce, err = crypto.GetRandomNonce()
+	//if err != nil {
+	//	return nil, "", err
+	//}
+	digest, err := factory.GetDefault().Hash(
+		append(nonce, creator...),
+		&bccsp.SHA256Opts{})
+	if err != nil {
+		return nil, "", err
+	}
+	txid := hex.EncodeToString(digest)
+	fmt.Println("====================", txid)
+
 	result, _ := f.QueryCC(0, "mychannel1", "token",
 		"getPeers", [][]byte{[]byte("fab")})
 	peers := make(map[string]bool)
@@ -180,6 +210,7 @@ func (f *FabSdkProvider) InvokeCC(peer string, peerType int, index int, channelI
 
 	// Synchronous transaction
 	response, err := chClient.Execute(
+		creator, nonce,
 		channel.Request{
 			ChaincodeID: ccID,
 			Fcn:         function,

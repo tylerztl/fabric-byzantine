@@ -106,11 +106,17 @@ func (cc *Client) Query(request Request, options ...RequestOption) (Response, er
 //
 //  Returns:
 //  the proposal responses from peer(s)
-func (cc *Client) Execute(request Request, options ...RequestOption) (Response, error) {
+func (cc *Client) Execute(creator, nonce []byte, request Request, options ...RequestOption) (Response, error) {
 	options = append(options, addDefaultTimeout(fab.Execute))
 	options = append(options, addDefaultTargetFilter(cc.context, filter.EndorsingPeer))
 
-	return callExecute(cc, request, options...)
+	var opts []fab.TxnHeaderOpt
+	opts = append(opts, fab.WithCreator(creator))
+	opts = append(opts, fab.WithNonce(nonce))
+
+	return callExecute(cc, request, func() []fab.TxnHeaderOpt {
+		return opts
+	}, options...)
 }
 
 // addDefaultTargetFilter adds default target filter if target filter is not specified

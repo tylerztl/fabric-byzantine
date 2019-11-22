@@ -16,6 +16,6 @@ func callQuery(cc *Client, request Request, options ...RequestOption) (Response,
 	return cc.InvokeHandler(invoke.NewQueryHandler(), request, options...)
 }
 
-func callExecute(cc *Client, request Request, options ...RequestOption) (Response, error) {
-	return cc.InvokeHandler(invoke.NewExecuteHandler(), request, options...)
+func callExecute(cc *Client, request Request, provider invoke.TxnHeaderOptsProvider, options ...RequestOption) (Response, error) {
+	return cc.InvokeHandler(invoke.NewExecuteHandlerWithOpts(provider), request, options...)
 }
