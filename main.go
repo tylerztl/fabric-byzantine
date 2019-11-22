@@ -345,7 +345,16 @@ func timerControl(w http.ResponseWriter, r *http.Request) {
 
 	timerFlag = !timerFlag
 	w.WriteHeader(200)
-	w.Write(nil)
+	w.Write([]byte(strconv.FormatBool(timerFlag)))
+}
+
+func controllerState(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("content-type", "application/json")
+
+	w.WriteHeader(200)
+	w.Write([]byte(strconv.FormatBool(timerFlag)))
 }
 
 func main() {
@@ -368,6 +377,7 @@ func main() {
 	http.HandleFunc("/peers", peerList)
 	http.HandleFunc("/statistics", getStatistics)
 	http.HandleFunc("/controller", timerControl)
+	http.HandleFunc("/controllerState", controllerState)
 	http.HandleFunc("/", home)
 	http.HandleFunc("/echo", echo)
 	log.Fatal(http.ListenAndServe(*addr, nil))
