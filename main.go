@@ -18,34 +18,16 @@ import (
 	"github.com/satori/go.uuid"
 )
 
+var timerFlag = true
+
 func timerTask() {
-	c := time.Tick(20 * time.Second)
+	c := time.Tick(30 * time.Second)
 	for {
 		<-c
-		//result, _ := server.GetSdkProvider().QueryCC(0, "mychannel1", "token",
-		//	"getPeers", [][]byte{[]byte("fab")})
-		//peers := make(map[string]bool)
-		//json.Unmarshal(result, &peers)
-		//
-		//peer := ""
-		//for k, v := range peers {
-		//	if v {
-		//		peer = k
-		//		break
-		//	}
-		//}
-		//index := 0
-		//if peer == "" {
-		//	peer = "peer0.org1.example.com"
-		//}
-		//index, _ = strconv.Atoi(peer[9:10])
-		//if index == 1 {
-		//	if k, err := strconv.Atoi(peer[9:11]); err == nil {
-		//		index = k
-		//	}
-		//}
-		go server.GetSdkProvider().InvokeCC("peer0.org1.example.com", 0, 0, "mychannel1", "token", "transfer",
-			[][]byte{[]byte("fab"), []byte("alice"), []byte("bob"), []byte("10"), []byte("false")})
+		if timerFlag {
+			go server.GetSdkProvider().InvokeCC("peer0.org1.example.com", 0, 0, "mychannel1", "token", "transfer",
+				[][]byte{[]byte("fab"), []byte("alice"), []byte("bob"), []byte("10"), []byte("false")})
+		}
 	}
 }
 
@@ -356,6 +338,16 @@ func getStatistics(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func timerControl(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("content-type", "application/json")
+
+	timerFlag = !timerFlag
+	w.WriteHeader(200)
+	w.Write(nil)
+}
+
 func main() {
 	defer mysql.CloseDB()
 
@@ -375,6 +367,7 @@ func main() {
 	http.HandleFunc("/muma", muma)
 	http.HandleFunc("/peers", peerList)
 	http.HandleFunc("/statistics", getStatistics)
+	http.HandleFunc("/controller", timerControl)
 	http.HandleFunc("/", home)
 	http.HandleFunc("/echo", echo)
 	log.Fatal(http.ListenAndServe(*addr, nil))

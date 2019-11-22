@@ -19,12 +19,21 @@ var BlockChans = new(sync.Map)
 var BlockNumberChans = new(sync.Map)
 var TxChans = new(sync.Map)
 var TxNumberChans = new(sync.Map)
+var TxList = new(sync.Map)
+
+type PeerTx struct {
+	PeerName string `json:"name"`
+	PeerType int    `json:"type"`
+}
 
 type BlockInfo struct {
 	Number    uint64    `json:"number"`
 	TxCount   int       `json:"tx_count"`
 	BlockHash string    `json:"block_hash"`
 	DateTime  time.Time `json:"datetime"`
+	Alice     string    `json:"alice_balance"`
+	Bob       string    `json:"bob_balance"`
+	Type      int       `json:"type"`
 }
 
 type TransactionInfo struct {
@@ -72,6 +81,8 @@ func updateBlock(block *cb.Block) {
 		panic(err.Error())
 	}
 
+	peerName := "peer0.org1.example.com"
+	peerType := 0
 	txLen := len(block.Data.Data)
 	var txTime time.Time
 	for i, envBytes := range block.Data.Data {
@@ -92,8 +103,30 @@ func updateBlock(block *cb.Block) {
 		validationCode := int(block.Metadata.Metadata[cb.BlockMetadataIndex_TRANSACTIONS_FILTER][i])
 
 		logger.Debug("Seek block number:%d", block.Header.Number)
+
+		val, ok := TxList.Load(channelHeader.TxId)
+		if !ok {
+			logger.Error("UpdateBlock not found txId: %s", channelHeader.TxId)
+		} else {
+			peerName = val.(PeerTx).PeerName
+			peerType = val.(PeerTx).PeerType
+			TxList.Delete(channelHeader.TxId)
+		}
+
+		TxChans.Range(func(key, value interface{}) bool {
+			datas, _ := json.Marshal(&TransactionInfo{
+				Status:   validationCode,
+				TxId:     channelHeader.TxId,
+				DateTime: txTime,
+				Peer:     peerName,
+				TxType:   peerType,
+			})
+			value.(chan []byte) <- datas
+			return true
+		})
+
 		_, err = begin.Stmt(mysql.GetStmtTx()).Exec(block.Header.Number*uint64(appConf.TxNumPerBlock)+uint64(i), block.Header.Number,
-			channelHeader.TxId, "peer0.org1.example.com", 0, validationCode, txTime)
+			channelHeader.TxId, peerName, peerType, validationCode, txTime)
 		if err != nil {
 			logger.Warn(err.Error()) // proper error handling instead of panic in your app
 		}
@@ -109,7 +142,7 @@ func updateBlock(block *cb.Block) {
 	bobBalance, _ := GetSdkProvider().QueryCC(0, "mychannel1", "token",
 		"balance", [][]byte{[]byte("fab"), []byte("bob")})
 
-	_, err = begin.Stmt(mysql.GetStmtBlock()).Exec(block.Header.Number, hex.EncodeToString(block.Header.DataHash), txLen, txTime, aliceBalance, bobBalance, 0)
+	_, err = begin.Stmt(mysql.GetStmtBlock()).Exec(block.Header.Number, hex.EncodeToString(block.Header.DataHash), txLen, txTime, aliceBalance, bobBalance, peerType)
 	if err != nil {
 		logger.Warn(err.Error()) // proper error handling instead of panic in your app
 	}
@@ -139,6 +172,9 @@ func updateBlock(block *cb.Block) {
 			TxCount:   txLen,
 			BlockHash: hex.EncodeToString(block.Header.DataHash),
 			DateTime:  txTime,
+			Alice:     string(aliceBalance),
+			Bob:       string(bobBalance),
+			Type:      peerType,
 		})
 		value.(chan []byte) <- datas
 		return true

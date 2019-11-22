@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fabric-byzantine/server/helpers"
-	"fabric-byzantine/server/mysql"
 	"fmt"
 	"strconv"
 	"time"
@@ -167,6 +166,7 @@ func (f *FabSdkProvider) InvokeCC(peer string, peerType int, index int, channelI
 	}
 	txid := hex.EncodeToString(digest)
 	fmt.Println("====================", txid)
+	TxList.Store(txid, PeerTx{peer, peerType})
 
 	result, _ := f.QueryCC(0, "mychannel1", "token",
 		"getPeers", [][]byte{[]byte("fab")})
@@ -244,39 +244,6 @@ func (f *FabSdkProvider) InvokeCC(peer string, peerType int, index int, channelI
 		}
 
 		return nil, helpers.TransactionID(response.TransactionID), err
-	}
-
-	bFlage := false
-	timeout := 0
-	var valQuery []byte
-	var errQuery error
-	for {
-		if bFlage || timeout > 10 {
-			break
-		}
-		select {
-		case <-time.After(time.Millisecond * time.Duration(500)):
-			valQuery, errQuery = mysql.QueryTransaction(string(response.TransactionID))
-			bFlage = errQuery == nil
-			timeout++
-		}
-	}
-
-	var rawDatas []map[string]string
-	if err := json.Unmarshal(valQuery, &rawDatas); err == nil {
-		rawDatas[0]["peer"] = peer
-		rawDatas[0]["tx_type"] = strconv.Itoa(peerType)
-		TxChans.Range(func(key, value interface{}) bool {
-			datas, _ := json.Marshal(rawDatas[0])
-			value.(chan []byte) <- datas
-			return true
-		})
-	}
-
-	if bFlage {
-		if err := mysql.UpdateTransaction(peer, string(response.TransactionID), peerType); err != nil {
-			logger.Error("UpdateTransaction err:%s", err.Error())
-		}
 	}
 
 	if function == "transfer" {
