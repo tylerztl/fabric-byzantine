@@ -113,6 +113,10 @@ func updateBlock(block *cb.Block) {
 			TxList.Delete(channelHeader.TxId)
 		}
 
+		if peerType > 0 && peerType <= 3 {
+			validationCode = 1
+		}
+
 		TxChans.Range(func(key, value interface{}) bool {
 			datas, _ := json.Marshal(&TransactionInfo{
 				Status:   validationCode,
@@ -149,7 +153,7 @@ func updateBlock(block *cb.Block) {
 			peerType = 1
 		}
 	}
-	
+
 	_, err = begin.Stmt(mysql.GetStmtBlock()).Exec(block.Header.Number, hex.EncodeToString(block.Header.DataHash), txLen, txTime, aliceBalance, bobBalance, peerType)
 	if err != nil {
 		logger.Warn(err.Error()) // proper error handling instead of panic in your app
