@@ -166,7 +166,6 @@ func (f *FabSdkProvider) InvokeCC(peer string, peerType int, index int, channelI
 	}
 	txid := hex.EncodeToString(digest)
 	fmt.Println("====================", txid)
-	TxList.Store(txid, PeerTx{peer, peerType})
 
 	result, _ := f.QueryCC(0, "mychannel1", "token",
 		"getPeers", [][]byte{[]byte("fab")})
@@ -189,6 +188,12 @@ func (f *FabSdkProvider) InvokeCC(peer string, peerType int, index int, channelI
 			bPeers = append(bPeers, index)
 		}
 	}
+	if peerType == 1 {
+		TxList.Store(txid, PeerTx{peer, len(bPeers)})
+	} else {
+		TxList.Store(txid, PeerTx{peer, peerType})
+	}
+
 	var targets []fab.Peer
 	if len(nPeers) >= 7 {
 		targets = make([]fab.Peer, len(nPeers))
@@ -254,7 +259,9 @@ func (f *FabSdkProvider) InvokeCC(peer string, peerType int, index int, channelI
 			t.NormalCommit++
 		} else {
 			t.ByzantineTx++
-			t.ByzantineCommit++
+			if len(bPeers) >= 7 {
+				t.ByzantineCommit++
+			}
 		}
 		StatisticsTable[num] = t
 	}

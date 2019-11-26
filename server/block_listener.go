@@ -142,6 +142,14 @@ func updateBlock(block *cb.Block) {
 	bobBalance, _ := GetSdkProvider().QueryCC(0, "mychannel1", "token",
 		"balance", [][]byte{[]byte("fab"), []byte("bob")})
 
+	if peerType > 0 {
+		if peerType <= 3 {
+			peerType = 0
+		} else {
+			peerType = 1
+		}
+	}
+	
 	_, err = begin.Stmt(mysql.GetStmtBlock()).Exec(block.Header.Number, hex.EncodeToString(block.Header.DataHash), txLen, txTime, aliceBalance, bobBalance, peerType)
 	if err != nil {
 		logger.Warn(err.Error()) // proper error handling instead of panic in your app
