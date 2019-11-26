@@ -113,8 +113,11 @@ func updateBlock(block *cb.Block) {
 			TxList.Delete(channelHeader.TxId)
 		}
 
-		if peerType > 0 && peerType <= 3 {
-			validationCode = 1
+		if peerType > 0 {
+			if  peerType <= 3 {
+				validationCode = 1
+			}
+			peerType = 1
 		}
 
 		TxChans.Range(func(key, value interface{}) bool {
