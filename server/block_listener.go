@@ -120,20 +120,25 @@ func updateBlock(block *cb.Block) {
 			peerType = 1
 		}
 
+		var s int
+		if peerType > 0 {
+			s = 1
+		}
+
 		TxChans.Range(func(key, value interface{}) bool {
 			datas, _ := json.Marshal(&TransactionInfo{
 				Status:   validationCode,
 				TxId:     channelHeader.TxId,
 				DateTime: txTime,
 				Peer:     peerName,
-				TxType:   peerType,
+				TxType:   s,
 			})
 			value.(chan []byte) <- datas
 			return true
 		})
 
 		_, err = begin.Stmt(mysql.GetStmtTx()).Exec(block.Header.Number*uint64(appConf.TxNumPerBlock)+uint64(i), block.Header.Number,
-			channelHeader.TxId, peerName, peerType, validationCode, txTime)
+			channelHeader.TxId, peerName, s, validationCode, txTime)
 		if err != nil {
 			logger.Warn(err.Error()) // proper error handling instead of panic in your app
 		}
