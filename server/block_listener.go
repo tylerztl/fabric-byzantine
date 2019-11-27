@@ -117,7 +117,6 @@ func updateBlock(block *cb.Block) {
 			if  peerType <= 3 {
 				validationCode = 1
 			}
-			peerType = 1
 		}
 
 		var s int
