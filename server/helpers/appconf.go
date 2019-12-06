@@ -18,6 +18,7 @@ type Application struct {
 	OrderderInfo  []*OrderderInfo `yaml:"orderer"`
 	DB            *DBInfo         `yaml:"db"`
 	TxNumPerBlock int64           `yaml:"txNumPerBlock"`
+	TxInterval    int64           `yaml:"txInterval"`
 }
 
 type OrgInfo struct {

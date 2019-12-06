@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fabric-byzantine/server"
+	"fabric-byzantine/server/helpers"
 	"fabric-byzantine/server/mysql"
 	"flag"
 	"fmt"
@@ -21,7 +22,7 @@ import (
 var timerFlag = true
 
 func timerTask() {
-	c := time.Tick(30 * time.Second)
+	c := time.Tick(time.Duration(helpers.GetAppConf().Conf.TxInterval) * time.Second)
 	for {
 		<-c
 		if timerFlag {

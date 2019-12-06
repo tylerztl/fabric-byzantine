@@ -47,3 +47,4 @@ application:
     maxOpenConns: 10000
     maxIdleConns: 1000
   txNumPerBlock: 100
+  txInterval: 30
