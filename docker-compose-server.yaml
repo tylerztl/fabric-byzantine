@@ -17,7 +17,8 @@ services:
     ports:
       - 8080:8080
     volumes:
-      - ./conf:/go/src/fabric-byzantine/conf
+      - ./conf/app.yaml:/go/src/fabric-byzantine/conf/app.yaml
+      - ./conf/config-docker.yaml:/go/src/fabric-byzantine/conf/config.yaml
       - ./channel-artifacts:/go/src/fabric-byzantine/channel-artifacts
       - ./crypto-config:/go/src/fabric-byzantine/crypto-config
       - /tmp/fabric-byzantine-logs:/go/src/fabric-byzantine/logs

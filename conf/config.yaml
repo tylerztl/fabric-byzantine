@@ -1282,59 +1282,59 @@ peers:
 entityMatchers:
   peer:
     - pattern: (\w*)peer0.org1.example.com(\w*)
-      urlSubstitutionExp: peer0.org1.example.com:7051
-      eventUrlSubstitutionExp: peer0.org1.example.com:7053
+      urlSubstitutionExp: localhost:7051
+      eventUrlSubstitutionExp: localhost:7053
       sslTargetOverrideUrlSubstitutionExp: peer0.org1.example.com
       mappedHost: peer0.org1.example.com
     - pattern: (\w*)peer0.org2.example.com(\w*)
-      urlSubstitutionExp: peer0.org2.example.com:9051
-      eventUrlSubstitutionExp: peer0.org2.example.com:9053
+      urlSubstitutionExp: localhost:9051
+      eventUrlSubstitutionExp: localhost:9053
       sslTargetOverrideUrlSubstitutionExp: peer0.org2.example.com
       mappedHost: peer0.org2.example.com
     - pattern: (\w*)peer0.org3.example.com(\w*)
-      urlSubstitutionExp: peer0.org3.example.com:11051
-      eventUrlSubstitutionExp: peer0.org3.example.com:11053
+      urlSubstitutionExp: localhost:11051
+      eventUrlSubstitutionExp: localhost:11053
       sslTargetOverrideUrlSubstitutionExp: peer0.org3.example.com
       mappedHost: peer0.org3.example.com
     - pattern: (\w*)peer0.org4.example.com(\w*)
-      urlSubstitutionExp: peer0.org4.example.com:13051
-      eventUrlSubstitutionExp: peer0.org4.example.com:13053
+      urlSubstitutionExp: localhost:13051
+      eventUrlSubstitutionExp: localhost:13053
       sslTargetOverrideUrlSubstitutionExp: peer0.org4.example.com
       mappedHost: peer0.org4.example.com
     - pattern: (\w*)peer0.org5.example.com(\w*)
-      urlSubstitutionExp: peer0.org5.example.com:15051
-      eventUrlSubstitutionExp: peer0.org5.example.com:15053
+      urlSubstitutionExp: localhost:15051
+      eventUrlSubstitutionExp: localhost:15053
       sslTargetOverrideUrlSubstitutionExp: peer0.org5.example.com
       mappedHost: peer0.org5.example.com
     - pattern: (\w*)peer0.org6.example.com(\w*)
-      urlSubstitutionExp: peer0.org6.example.com:17051
-      eventUrlSubstitutionExp: peer0.org6.example.com:17053
+      urlSubstitutionExp: localhost:17051
+      eventUrlSubstitutionExp: localhost:17053
       sslTargetOverrideUrlSubstitutionExp: peer0.org6.example.com
       mappedHost: peer0.org6.example.com
     - pattern: (\w*)peer0.org7.example.com(\w*)
-      urlSubstitutionExp: peer0.org7.example.com:19051
-      eventUrlSubstitutionExp: peer0.org7.example.com:19053
+      urlSubstitutionExp: localhost:19051
+      eventUrlSubstitutionExp: localhost:19053
       sslTargetOverrideUrlSubstitutionExp: peer0.org7.example.com
       mappedHost: peer0.org7.example.com
     - pattern: (\w*)peer0.org8.example.com(\w*)
-      urlSubstitutionExp: peer0.org8.example.com:21051
-      eventUrlSubstitutionExp: peer0.org8.example.com:21053
+      urlSubstitutionExp: localhost:21051
+      eventUrlSubstitutionExp: localhost:21053
       sslTargetOverrideUrlSubstitutionExp: peer0.org8.example.com
       mappedHost: peer0.org8.example.com
     - pattern: (\w*)peer0.org9.example.com(\w*)
-      urlSubstitutionExp: peer0.org9.example.com:23051
-      eventUrlSubstitutionExp: peer0.org9.example.com:23053
+      urlSubstitutionExp: localhost:23051
+      eventUrlSubstitutionExp: localhost:23053
       sslTargetOverrideUrlSubstitutionExp: peer0.org9.example.com
       mappedHost: peer0.org9.example.com
     - pattern: (\w*)peer0.org10.example.com(\w*)
-      urlSubstitutionExp: peer0.org10.example.com:25051
-      eventUrlSubstitutionExp: peer0.org10.example.com:25053
+      urlSubstitutionExp: localhost:25051
+      eventUrlSubstitutionExp: localhost:25053
       sslTargetOverrideUrlSubstitutionExp: peer0.org10.example.com
       mappedHost: peer0.org10.example.com
 
   orderer:
     - pattern: (\w*)orderer.example.com(\w*)
-      urlSubstitutionExp: orderer.example.com:7050
+      urlSubstitutionExp: localhost:7050
       sslTargetOverrideUrlSubstitutionExp: orderer.example.com
       mappedHost: orderer.example.com
 

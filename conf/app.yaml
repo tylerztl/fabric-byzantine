@@ -42,7 +42,7 @@ application:
     user: root
     password: zhigui
     name: explore
-    host: localhost #blockchain-mysql
+    host: blockchain-mysql #blockchain-mysql
     port: 3306
     maxOpenConns: 10000
     maxIdleConns: 1000
