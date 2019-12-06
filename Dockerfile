@@ -2,6 +2,7 @@ FROM library/golang AS build
 
 MAINTAINER tailinzhang1993@gmail.com
 
+ENV GO111MODULE off
 ENV APP_DIR /go/src/fabric-byzantine
 RUN mkdir -p $APP_DIR
 WORKDIR $APP_DIR
