@@ -3,14 +3,15 @@ module fabric-byzantine
 go 1.13
 
 require (
+	github.com/Shopify/sarama v1.32.0 // indirect
 	github.com/astaxie/beego v1.12.0
 	github.com/fsouza/go-dockerclient v1.5.0 // indirect
-	github.com/gin-gonic/gin v1.4.0 // indirect
 	github.com/go-sql-driver/mysql v1.4.1
-	github.com/gogo/protobuf v1.3.0
+	github.com/gogo/protobuf v1.3.2
 	github.com/golang/protobuf v1.3.2
 	github.com/gorilla/websocket v1.4.1
 	github.com/grpc-ecosystem/go-grpc-middleware v1.1.0 // indirect
+	github.com/hashicorp/go-version v1.4.0 // indirect
 	github.com/hyperledger/fabric v1.4.3
 	github.com/hyperledger/fabric-amcl v0.0.0-20190902191507-f66264322317 // indirect
 	github.com/hyperledger/fabric-protos-go v0.0.0-20190919234611-2a87503ac7c9
