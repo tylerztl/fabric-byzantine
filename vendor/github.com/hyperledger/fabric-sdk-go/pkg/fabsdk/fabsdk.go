@@ -365,7 +365,7 @@ func (sdk *FabricSDK) Config() (core.ConfigBackend, error) {
 func (sdk *FabricSDK) Context(options ...ContextOption) contextApi.ClientProvider {
 
 	clientProvider := func() (contextApi.Client, error) {
-		identity, err := sdk.NewIdentity(options...)
+		identity, err := sdk.newIdentity(options...)
 		if err == ErrAnonymousIdentity {
 			identity = nil
 			err = nil

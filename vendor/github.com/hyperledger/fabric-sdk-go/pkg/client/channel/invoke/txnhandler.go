@@ -138,29 +138,6 @@ func (f *EndorsementValidationHandler) Handle(requestContext *RequestContext, cl
 
 func (f *EndorsementValidationHandler) validate(txProposalResponse []*fab.TransactionProposalResponse) error {
 	var a1 *pb.ProposalResponse
-	//for _, r := range txProposalResponse {
-	//	response := r.ProposalResponse.GetResponse()
-	//	if response.Status < int32(common.Status_SUCCESS) || response.Status >= int32(common.Status_BAD_REQUEST) {
-	//		return status.NewFromProposalResponse(r.ProposalResponse, r.Endorser)
-	//	}
-	//}
-	//for n, r := range txProposalResponse {
-	//	response := r.ProposalResponse.GetResponse()
-	//	if response.Status < int32(common.Status_SUCCESS) || response.Status >= int32(common.Status_BAD_REQUEST) {
-	//		return status.NewFromProposalResponse(r.ProposalResponse, r.Endorser)
-	//	}
-	//	if n == 0 {
-	//		a1 = r.ProposalResponse
-	//		continue
-	//	}
-	//
-	//	if !bytes.Equal(a1.Payload, r.ProposalResponse.Payload) ||
-	//		!bytes.Equal(a1.GetResponse().Payload, response.Payload) {
-	//		return status.New(status.EndorserClientStatus, status.EndorsementMismatch.ToInt32(),
-	//			"ProposalResponsePayloads do not match", nil)
-	//	}
-	//}
-	diff := 0
 	for n, r := range txProposalResponse {
 		response := r.ProposalResponse.GetResponse()
 		if response.Status < int32(common.Status_SUCCESS) || response.Status >= int32(common.Status_BAD_REQUEST) {
@@ -173,12 +150,9 @@ func (f *EndorsementValidationHandler) validate(txProposalResponse []*fab.Transa
 
 		if !bytes.Equal(a1.Payload, r.ProposalResponse.Payload) ||
 			!bytes.Equal(a1.GetResponse().Payload, response.Payload) {
-			diff++
+			return status.New(status.EndorserClientStatus, status.EndorsementMismatch.ToInt32(),
+				"ProposalResponsePayloads do not match", nil)
 		}
-	}
-	if diff > 3 && diff < 7 {
-		return status.New(status.EndorserClientStatus, status.EndorsementMismatch.ToInt32(),
-			"ProposalResponsePayloads do not match", nil)
 	}
 
 	return nil
@@ -248,14 +222,6 @@ func NewExecuteHandler(next ...Handler) Handler {
 	)
 }
 
-func NewExecuteHandlerWithOpts(provider TxnHeaderOptsProvider, next ...Handler) Handler {
-	return NewSelectAndEndorseHandlerWithOpts(provider,
-		NewEndorsementValidationHandler(
-			NewSignatureValidationHandler(NewCommitHandler(next...)),
-		),
-	)
-}
-
 //NewProposalProcessorHandler returns a handler that selects proposal processors
 func NewProposalProcessorHandler(next ...Handler) *ProposalProcessorHandler {
 	return &ProposalProcessorHandler{next: getNext(next)}
@@ -267,8 +233,8 @@ func NewEndorsementHandler(next ...Handler) *EndorsementHandler {
 }
 
 //NewEndorsementHandlerWithOpts returns a handler that endorses a transaction proposal
-func NewEndorsementHandlerWithOpts(provider TxnHeaderOptsProvider, next ...Handler) *EndorsementHandler {
-	return &EndorsementHandler{next: getNext(next), headerOptsProvider: provider}
+func NewEndorsementHandlerWithOpts(next Handler, provider TxnHeaderOptsProvider) *EndorsementHandler {
+	return &EndorsementHandler{next: next, headerOptsProvider: provider}
 }
 
 //NewEndorsementValidationHandler returns a handler that validates an endorsement
